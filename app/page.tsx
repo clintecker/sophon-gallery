@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { studies } from "./works";
 
 export default function Home() {
@@ -24,12 +23,17 @@ export default function Home() {
           {studies.map((work) => (
             <li key={work.slug}>
               <a href={`#${work.slug}`}>
-                <Image
-                  src={`/posters/${work.slug}.png`}
-                  alt=""
-                  width={320}
-                  height={180}
-                />
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  poster={`/posters/${work.slug}.png`}
+                  preload="metadata"
+                  aria-label={`${work.title} animated preview`}
+                >
+                  <source src={`/videos/${work.slug}.mp4`} type="video/mp4" />
+                </video>
                 <span>{work.slug.slice(0, 2)}</span>
                 <strong>{work.title}</strong>
               </a>

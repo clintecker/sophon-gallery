@@ -22,10 +22,10 @@ h1 em { color: var(--acid); font-family: Georgia, serif; font-weight: 400; }
 .index-heading strong { color: var(--acid); }
 .study-index ol { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; margin: 0; padding: 0; list-style: none; }
 .study-index a { display: grid; grid-template-columns: auto 1fr; gap: 8px 10px; color: var(--ink); text-decoration: none; }
-.study-index img { grid-column: 1 / -1; display: block; width: 100%; aspect-ratio: 16/9; border: 1px solid var(--line); object-fit: cover; background: #111116; transition: border-color .15s ease, transform .15s ease; }
+.study-index video { grid-column: 1 / -1; display: block; width: 100%; aspect-ratio: 16/9; border: 1px solid var(--line); object-fit: cover; background: #111116; transition: border-color .15s ease, transform .15s ease; }
 .study-index span { color: var(--acid); font: 600 9px/1.25 var(--font-geist-mono); }
 .study-index li strong { min-width: 0; font-size: 11px; line-height: 1.25; letter-spacing: -.01em; }
-.study-index a:hover img, .study-index a:focus-visible img { border-color: var(--acid); transform: translateY(-2px); }
+.study-index a:hover video, .study-index a:focus-visible video { border-color: var(--acid); transform: translateY(-2px); }
 .study-index a:focus-visible { outline: 2px solid var(--acid); outline-offset: 4px; }
 .gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 100px 34px; padding: 70px 0 160px; border-top: 1px solid var(--line); scroll-margin-top: 20px; }
 .study { scroll-margin-top: 20px; }

@@ -51,9 +51,11 @@ test("server-renders the complete accessible gallery", async () => {
   assert.match(html, /property="og:image" content="http:\/\/localhost\/og\.png"/i);
   assert.match(html, /Rotating Crystal Mandala/);
   assert.match(html, /Scene Checker/);
-  assert.equal((html.match(/<video\b/g) ?? []).length, 26);
+  assert.equal((html.match(/<video\b/g) ?? []).length, 52);
+  assert.equal((html.match(/animated preview/g) ?? []).length, 52);
+  assert.equal((html.match(/autoPlay|autoplay/g) ?? []).length, 52);
   assert.equal((html.match(/<li><a href="#\d\d-/g) ?? []).length, 26);
-  assert.equal((html.match(/<img\b/g) ?? []).length, 26);
+  assert.equal((html.match(/<img\b/g) ?? []).length, 0);
   assert.equal((html.match(/<a href="\/videos\//g) ?? []).length, 26);
   assert.equal((html.match(/<a href="\/patches\//g) ?? []).length, 26);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|MORE STUDIES IN PROGRESS/i);
