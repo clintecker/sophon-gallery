@@ -1,0 +1,42 @@
+// Blue and amber emission fields retain independent one-frame histories.
+patch id="example-memory-braid" {
+    output width=32 height=18 rate-hz=30
+
+    node "gradient" id="background" label="Indigo backdrop" {
+        axis "vertical"
+        sample-a coverage-r=0.005 coverage-g=0.008 coverage-b=0.04 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.08 coverage-g=0.015 coverage-b=0.16 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "noise" id="blue-now" label="Fresh blue energy" {
+        seed 1010
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.03 emission-g=0.30 emission-b=1.1
+    }
+    node "noise" id="amber-now" label="Fresh amber energy" {
+        seed 2020
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=1.2 emission-g=0.34 emission-b=0.02
+    }
+    node "modulate" id="blue-memory" label="Blue memory decay" {
+        amount 0.34 unit="ratio"
+    }
+    node "modulate" id="amber-memory" label="Amber memory decay" {
+        amount 0.49 unit="ratio"
+    }
+    node "composite" id="blue-lane" label="Blue history lane"
+    node "composite" id="amber-lane" label="Amber history lane"
+    node "composite" id="braid" label="Braided energy"
+    node "composite" id="final" label="Memory braid program"
+
+    connect id="previous-blue" from="blue-lane.image" to="blue-memory.image" timing="previous-frame"
+    connect id="previous-amber" from="amber-lane.image" to="amber-memory.image" timing="previous-frame"
+    connect id="blue-current" from="blue-now.image" to="blue-lane.background"
+    connect id="blue-history" from="blue-memory.image" to="blue-lane.foreground"
+    connect id="amber-current" from="amber-now.image" to="amber-lane.background"
+    connect id="amber-history" from="amber-memory.image" to="amber-lane.foreground"
+    connect id="blue" from="blue-lane.image" to="braid.background"
+    connect id="amber" from="amber-lane.image" to="braid.foreground"
+    connect id="background" from="background.image" to="final.background"
+    connect id="braided-energy" from="braid.image" to="final.foreground"
+    sink id="program" input="final.image"
+}

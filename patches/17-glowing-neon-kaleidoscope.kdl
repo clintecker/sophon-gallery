@@ -1,0 +1,54 @@
+// Four moving rings keep crisp edges while their additive light blooms outward.
+patch id="example-glowing-neon-kaleidoscope" {
+    output width=180 height=90 rate-hz=30
+
+    node "gradient" id="midnight" label="Midnight blue background" {
+        axis "vertical"
+        sample-a coverage-r=0.001 coverage-g=0.002 coverage-b=0.014 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.016 coverage-g=0.002 coverage-b=0.045 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.012
+    }
+    node "gradient" id="cyan-light" label="Electric cyan radial light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.85 emission-b=1.8
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="hollow-matte" label="Transparent ring center" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="cyan-ring" label="Hollow cyan ring"
+    node "scroll" id="orbit" label="Moving asymmetric ring" {
+        x-offset 41 unit="px"
+        y-offset 17 unit="px"
+        x-per-frame 6 unit="px"
+        y-per-frame 3 unit="px"
+    }
+    node "mirror" id="opposite-side" label="Left-right reflection" {
+        axis "left-right"
+    }
+    node "composite" id="horizontal-pair" label="Two opposing rings"
+    node "mirror" id="opposite-row" label="Top-bottom reflection" {
+        axis "top-bottom"
+    }
+    node "composite" id="fourfold-rings" label="Fourfold reflected rings"
+    node "bloom" id="bloomed-rings" label="Coverage-safe neon bloom" {
+        radius 9 unit="px"
+        intensity 0.55 unit="ratio"
+    }
+    node "composite" id="program-image" label="Glowing neon kaleidoscope"
+
+    connect id="ring-image" from="cyan-light.image" to="cyan-ring.image"
+    connect id="ring-hollow" from="hollow-matte.image" to="cyan-ring.mask"
+    connect id="ring-motion" from="cyan-ring.image" to="orbit.image"
+    connect id="motion-mirror" from="orbit.image" to="opposite-side.image"
+    connect id="pair-original" from="orbit.image" to="horizontal-pair.background"
+    connect id="pair-reflection" from="opposite-side.image" to="horizontal-pair.foreground"
+    connect id="pair-mirror" from="horizontal-pair.image" to="opposite-row.image"
+    connect id="rings-upper" from="horizontal-pair.image" to="fourfold-rings.background"
+    connect id="rings-lower" from="opposite-row.image" to="fourfold-rings.foreground"
+    connect id="rings-bloom" from="fourfold-rings.image" to="bloomed-rings.image"
+    connect id="background" from="midnight.image" to="program-image.background"
+    connect id="light" from="bloomed-rings.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

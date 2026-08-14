@@ -1,0 +1,27 @@
+slug	title	capabilities	highlight
+00-scene-checker	Scene Checker	checker,source	Exact scene-linear square parity with no external media.
+01-horizontal-gradient	Horizontal Gradient	gradient,source	The smallest direct generated-image flow.
+02-emissive-gradient	Emissive Gradient	gradient,emission	Independent glow rises above display white.
+03-animated-noise	Animated Noise	noise,animation	A seed and frame identity produce repeatable motion.
+04-modulated-noise	Modulated Noise	noise,modulate	One effect controls the strength of animated energy.
+05-gradient-over-gradient	Gradient Over Gradient	gradient,composite	Foreground and background blend in source-over order.
+06-layered-energy	Layered Energy	composite,graph	A multi-stage image graph builds a richer field.
+07-delayed-feedback	Delayed Feedback	history,feedback	Explicit previous-frame state leaves a fading memory.
+08-dual-energy-storm	Dual Energy Storm	noise,emission,composite	Two independent energy fields collide over color.
+09-dual-decay-echo	Dual Decay Echo	history,feedback	Two decay paths turn one history into layered echoes.
+10-memory-braid	Memory Braid	history,composite	Independent blue and amber memories weave together.
+11-animated-mask	Animated Mask	mask,animation	A moving matte reveals an aurora without leaking glow.
+12-neon-memory-gate	Neon Memory Gate	scroll,radial-gradient	Three neon bodies cross on seamless wrapped paths.
+13-neon-comet-trails	Neon Comet Trails	history,scroll	Moving lights paint persistent colored trails.
+14-prismatic-ring-dance	Prismatic Ring Dance	mask,scroll	Opposing mattes turn soft lights into dancing rings.
+15-prismatic-ribbon-portal	Prismatic Ribbon Portal	history,scroll	Three moving memories braid into a violet portal.
+16-fourfold-neon-bloom	Fourfold Neon Bloom	mirror,composite	One moving light becomes a four-way symmetric bloom.
+17-glowing-neon-kaleidoscope	Glowing Neon Kaleidoscope	bloom,mirror	Crisp reflected rings cast coverage-safe additive light halos.
+18-cosmic-double-key	Cosmic Double Key	chroma-key,luma-key	Two synthetic studio takes become isolated moving lights.
+19-crystalline-key-vortex	Crystalline Key Vortex	keying,matte-refine	Soft keys become sharply sculpted crystal energy.
+20-neon-matte-sculptor	Neon Matte Sculptor	morphology,keying	Grow and shrink reshape two luminous silhouettes.
+21-spill-cleanup-duel	Spill Cleanup Duel	despill,keying	Cleaned warm edges race their contaminated twins.
+22-cosmic-prism-gate	Cosmic Prism Gate	still-image,bloom	Imported cosmic art becomes counter-moving light fields.
+23-hyperdimensional-aurora-engine	Hyperdimensional Aurora Engine	still-image,fill,bloom	Square artwork erupts through a widescreen crystal engine.
+24-aurora-clip-reactor	Aurora Clip Reactor	clip,h264,loop,bloom	Decoded H.264 motion is keyed reflected and bloomed.
+25-rotating-crystal-mandala	Rotating Crystal Mandala	transform,rotation,bloom	Counter-rotating cyan and gold crystal planes form a luminous spectral mandala.

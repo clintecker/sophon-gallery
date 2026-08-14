@@ -1,0 +1,76 @@
+// A raw green-screen key races its despilled twin through a flicker-free neon loop.
+patch id="example-spill-cleanup-duel" {
+    output width=180 height=90 rate-hz=30
+
+    node "gradient" id="space" label="Flicker-free midnight arena" {
+        axis "radial"
+        sample-a coverage-r=0.008 coverage-g=0.002 coverage-b=0.035 coverage-a=1.0 emission-r=0.025 emission-g=0.0 emission-b=0.1
+        sample-b coverage-r=0.001 coverage-g=0.001 coverage-b=0.008 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.01
+    }
+    node "gradient" id="green-stage" label="Synthetic green stage" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.65 coverage-b=0.02 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.65 coverage-b=0.02 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="warm-performer" label="Warm light with obvious reflected green" {
+        axis "radial"
+        sample-a coverage-r=0.7 coverage-g=1.4 coverage-b=0.12 coverage-a=1.0 emission-r=1.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="green-screen-take" label="Deliberately contaminated take"
+    node "chroma-key" id="soft-key" label="Remove most of the green stage" {
+        key-red 0.0
+        key-green 0.65
+        key-blue 0.02
+        threshold 0.16 unit="ratio"
+        softness 0.28 unit="ratio"
+    }
+    node "scroll" id="raw-orbit" label="Move untreated green-spill edge" {
+        x-offset -49 unit="px"
+        y-offset -18 unit="px"
+        x-per-frame 6 unit="px"
+        y-per-frame 3 unit="px"
+    }
+    node "despill" id="remove-green-spill" label="Clean reflected green from the edge" {
+        channel "green"
+        amount 1.0 unit="ratio"
+    }
+    node "scroll" id="clean-orbit" label="Counter-move clean warm edge" {
+        x-offset 49 unit="px"
+        y-offset -18 unit="px"
+        x-per-frame -6 unit="px"
+        y-per-frame 3 unit="px"
+    }
+    node "composite" id="comparison" label="Raw and cleaned key side by side"
+    node "mirror" id="reflected-comparison" label="Opposing cleanup duel" {
+        axis "both"
+    }
+    node "composite" id="four-racers" label="Four moving before-and-after lights"
+    node "blur" id="shared-halo" label="Soft luminous halo" {
+        radius 5 unit="px"
+    }
+    node "modulate" id="crisp-core" label="Crisp readable cores" {
+        amount 0.72 unit="ratio"
+    }
+    node "composite" id="bloomed-racers" label="Halo plus crisp color comparison"
+    node "composite" id="program-image" label="Green spill cleanup duel"
+
+    connect id="stage" from="green-stage.image" to="green-screen-take.background"
+    connect id="performer" from="warm-performer.image" to="green-screen-take.foreground"
+    connect id="key" from="green-screen-take.image" to="soft-key.image"
+    connect id="raw-motion" from="soft-key.image" to="raw-orbit.image"
+    connect id="despill" from="soft-key.image" to="remove-green-spill.image"
+    connect id="clean-motion" from="remove-green-spill.image" to="clean-orbit.image"
+    connect id="raw-layer" from="raw-orbit.image" to="comparison.background"
+    connect id="clean-layer" from="clean-orbit.image" to="comparison.foreground"
+    connect id="reflection" from="comparison.image" to="reflected-comparison.image"
+    connect id="original-pair" from="comparison.image" to="four-racers.background"
+    connect id="reflected-pair" from="reflected-comparison.image" to="four-racers.foreground"
+    connect id="halo" from="four-racers.image" to="shared-halo.image"
+    connect id="core" from="four-racers.image" to="crisp-core.image"
+    connect id="halo-layer" from="shared-halo.image" to="bloomed-racers.background"
+    connect id="core-layer" from="crisp-core.image" to="bloomed-racers.foreground"
+    connect id="space-layer" from="space.image" to="program-image.background"
+    connect id="racers" from="bloomed-racers.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

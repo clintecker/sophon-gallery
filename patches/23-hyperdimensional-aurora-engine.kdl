@@ -1,0 +1,81 @@
+// A square authored crystal engine erupts into a seamless widescreen aurora storm.
+patch id="example-hyperdimensional-aurora-engine" {
+    output width=240 height=135 rate-hz=30
+
+    node "still-image" id="aurora-engine" label="Authored square aurora engine" {
+        asset "assets/hyperdimensional-aurora-engine.png"
+        color "override-srgb"
+        sizing "fill"
+    }
+    node "modulate" id="deep-engine" label="Controlled cinematic foundation" {
+        amount 0.62 unit="ratio"
+    }
+    node "luma-key" id="prismatic-eruption" label="Extract white-hot crystal energy" {
+        mode "dark"
+        threshold 0.12 unit="ratio"
+        softness 0.22 unit="ratio"
+    }
+
+    node "scroll" id="cyan-orbit" label="Energy races southeast" {
+        x-offset -88 unit="px"
+        y-offset -52 unit="px"
+        x-per-frame 8 unit="px"
+        y-per-frame 9 unit="px"
+    }
+    node "mirror" id="cyan-refraction" label="Opposed cyan refraction" {
+        axis "left-right"
+    }
+    node "composite" id="cyan-collision" label="Colliding cyan crystal fronts"
+
+    node "scroll" id="solar-orbit" label="Energy races northwest" {
+        x-offset 76 unit="px"
+        y-offset 38 unit="px"
+        x-per-frame -8 unit="px"
+        y-per-frame -9 unit="px"
+    }
+    node "mirror" id="solar-refraction" label="Opposed solar refraction" {
+        axis "top-bottom"
+    }
+    node "modulate" id="solar-core" label="Controlled solar crystal core" {
+        amount 0.74 unit="ratio"
+    }
+    node "composite" id="solar-collision" label="Colliding solar crystal fronts"
+    node "composite" id="all-eruptions" label="Four-way hyperdimensional eruption"
+    node "modulate" id="eruption-energy" label="Balanced moving refraction energy" {
+        amount 0.32 unit="ratio"
+    }
+
+    node "blur" id="aurora-shockwave" label="Wide volumetric shockwave" {
+        radius 9 unit="px"
+    }
+    node "modulate" id="crystal-detail" label="Sharp prismatic detail" {
+        amount 0.70 unit="ratio"
+    }
+    node "composite" id="bloomed-eruption" label="Crystal detail over aurora bloom"
+    node "composite" id="program-image" label="Hyperdimensional aurora engine"
+
+    connect id="engine-foundation" from="aurora-engine.image" to="deep-engine.image"
+    connect id="engine-energy" from="aurora-engine.image" to="prismatic-eruption.image"
+
+    connect id="cyan-motion" from="prismatic-eruption.image" to="cyan-orbit.image"
+    connect id="cyan-mirror" from="cyan-orbit.image" to="cyan-refraction.image"
+    connect id="cyan-original" from="cyan-orbit.image" to="cyan-collision.background"
+    connect id="cyan-copy" from="cyan-refraction.image" to="cyan-collision.foreground"
+
+    connect id="solar-motion" from="prismatic-eruption.image" to="solar-orbit.image"
+    connect id="solar-mirror" from="solar-orbit.image" to="solar-refraction.image"
+    connect id="solar-dim" from="solar-refraction.image" to="solar-core.image"
+    connect id="solar-original" from="solar-orbit.image" to="solar-collision.background"
+    connect id="solar-copy" from="solar-core.image" to="solar-collision.foreground"
+
+    connect id="cyan-layer" from="cyan-collision.image" to="all-eruptions.background"
+    connect id="solar-layer" from="solar-collision.image" to="all-eruptions.foreground"
+    connect id="balanced-eruption" from="all-eruptions.image" to="eruption-energy.image"
+    connect id="soft-eruption" from="eruption-energy.image" to="aurora-shockwave.image"
+    connect id="sharp-eruption" from="eruption-energy.image" to="crystal-detail.image"
+    connect id="shockwave-layer" from="aurora-shockwave.image" to="bloomed-eruption.background"
+    connect id="detail-layer" from="crystal-detail.image" to="bloomed-eruption.foreground"
+    connect id="deep-foundation" from="deep-engine.image" to="program-image.background"
+    connect id="animated-eruption" from="bloomed-eruption.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}
