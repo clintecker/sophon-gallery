@@ -55,10 +55,21 @@ footer span { font: 500 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; le
   .section-heading h2 { font-size: 32px; }
   .watch-all { margin-top: 5px; text-align: right; }
   .catalog-help { margin-top: -10px; }
-  .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .catalog {
+    display: flex;
+    gap: 8px;
+    margin-right: -12px;
+    padding: 2px 12px 16px 0;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: thin;
+    scrollbar-color: var(--acid) #15151a;
+  }
+  .catalog-card { flex: 0 0 min(78vw, 300px); scroll-snap-align: start; }
   .catalog-label { padding: 9px 9px 11px; }
   .catalog-label strong { font-size: 11px; }
-  .gallery { gap: 90px; padding: 55px 0 110px; }
+  .gallery { gap: 90px; padding: 28px 0 110px; }
   .study:nth-child(even) { width: 100%; }
   .study-copy { grid-template-columns: 1fr; gap: 26px; }
   .meta { align-items: flex-start; }

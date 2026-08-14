@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://clintecker.github.io/sophon-gallery/">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <main>
@@ -64,7 +64,7 @@
       video.defaultMuted = true;
       video.setAttribute("muted", "");
       video.playsInline = true;
-      video.preload = "none";
+      video.preload = "metadata";
       video.poster = `posters/${slug}.png`;
       const source = element("source");
       source.src = `videos/${slug}.mp4`;
@@ -125,8 +125,10 @@
         }
         document.querySelector("#study-count").textContent = `${records.length} AUTHORED STUDIES`;
         document.querySelector("#footer-count").textContent = `${records.length} PATCHES · ${records.length} VIDEOS`;
-        document.querySelector("#catalog-help").textContent =
-          `All ${records.length} videos are shown here. Tap any preview to jump to its full player.`;
+        const narrowScreen = window.matchMedia("(max-width: 720px)").matches;
+        document.querySelector("#catalog-help").textContent = narrowScreen
+          ? `All ${records.length} videos are below. Swipe this one-row index sideways, or jump straight to the players.`
+          : `All ${records.length} videos are shown here. Select any preview to jump to its full player.`;
         document.querySelector("#catalog").replaceChildren(...records.slice().reverse().map(catalogCard));
         gallery.replaceChildren(...records.reverse().map(studyCard));
       } catch (error) {
