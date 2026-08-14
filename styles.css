@@ -55,8 +55,7 @@ footer span { font: 500 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; le
   .section-heading h2 { font-size: 32px; }
   .watch-all { margin-top: 5px; text-align: right; }
   .catalog-help { margin-top: -10px; }
-  .catalog { display: flex; gap: 8px; overflow-x: auto; padding: 3px 2px 14px; scroll-snap-type: x mandatory; scrollbar-color: var(--acid) var(--line); }
-  .catalog-card { flex: 0 0 min(76vw, 300px); scroll-snap-align: start; }
+  .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .catalog-label { padding: 9px 9px 11px; }
   .catalog-label strong { font-size: 11px; }
   .gallery { gap: 90px; padding: 55px 0 110px; }
