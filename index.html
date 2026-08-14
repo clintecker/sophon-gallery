@@ -12,7 +12,7 @@
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://clintecker.github.io/sophon-gallery/">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <main>
@@ -20,27 +20,46 @@
       <div class="eyebrow"><span></span> PROJECT SOPHON · LIVE STUDIES</div>
       <h1>Signal becomes<br><em>visible.</em></h1>
       <p>A remote gallery of deterministic, authored visual programs. Every clip is rendered by Sophon—not a design mockup.</p>
+      <a class="hero-action" href="#now-playing-title">Watch all 26 videos ↓</a>
       <div class="hero-rule"><span id="study-count">LOADING STUDIES</span><span>AUG 2026</span></div>
     </header>
+
+    <section class="player-wrap" aria-labelledby="now-playing-title">
+      <div class="section-heading">
+        <div>
+          <p>NOW PLAYING</p>
+          <h2 id="now-playing-title">Choose a study below.</h2>
+        </div>
+        <span class="player-count" id="player-count">LOADING CATALOG</span>
+      </div>
+      <div class="frame">
+        <video id="player" controls loop muted playsinline preload="metadata">H.264 playback is unavailable here. Use “Open MP4” below.</video>
+        <span class="index" id="player-index">S/—</span>
+      </div>
+      <div class="player-copy">
+        <p id="player-description">The selected Sophon render will play here.</p>
+        <ul id="player-capabilities" aria-label="Primitives used"></ul>
+        <div class="meta-links">
+          <a id="video-link" href="#">Open MP4 ↗</a>
+          <a id="patch-link" href="#">View patch ↗</a>
+        </div>
+      </div>
+      <p class="player-status" id="player-status" role="status" aria-live="polite"></p>
+    </section>
 
     <nav class="catalog-wrap" aria-labelledby="catalog-title">
       <div class="section-heading">
         <div>
           <p>FULL CATALOG</p>
-          <h2 id="catalog-title">Choose a study.</h2>
+          <h2 id="catalog-title">Tap any video to play it.</h2>
         </div>
-        <a class="watch-all" href="#gallery">Watch every video ↓</a>
       </div>
       <p class="catalog-help" id="catalog-help">Loading the complete video catalog…</p>
       <div class="catalog" id="catalog">
         <p class="loading" role="status">Loading study index…</p>
       </div>
     </nav>
-
-    <section class="gallery" id="gallery" aria-label="Sophon visual studies">
-      <p class="loading" role="status">Loading all studies…</p>
-    </section>
-    <noscript><p class="load-error">JavaScript is required to load the gallery index. Direct MP4 files remain available in the repository.</p></noscript>
+    <noscript><p class="load-error">JavaScript is required to select a gallery video. Direct MP4 files remain available in the repository.</p></noscript>
 
     <footer><strong>SOPHON</strong><p>Professional real-time generative visuals, built from explicit signals.</p><span id="footer-count">PATCHES · VIDEOS</span></footer>
   </main>
@@ -52,51 +71,13 @@
       return node;
     }
 
-    function studyCard(record) {
-      const [slug, title, capabilities, highlight] = record;
-      const article = element("article", "study");
-      article.id = slug;
-      const frame = element("div", "frame");
-      const video = element("video");
-      video.controls = true;
-      video.loop = true;
-      video.muted = true;
-      video.defaultMuted = true;
-      video.setAttribute("muted", "");
-      video.playsInline = true;
-      video.preload = "metadata";
-      video.poster = `posters/${slug}.png`;
-      const source = element("source");
-      source.src = `videos/${slug}.mp4`;
-      source.type = "video/mp4";
-      video.append(source, document.createTextNode("Your browser does not support H.264 video playback."));
-      frame.append(video, element("span", "index", `S/${slug.slice(0, 2)}`));
-
-      const copy = element("div", "study-copy");
-      const description = element("div");
-      description.append(element("h2", "", title), element("p", "", highlight));
-      const meta = element("div", "meta");
-      const tags = element("ul");
-      tags.setAttribute("aria-label", "Primitives used");
-      capabilities.split(",").forEach((capability) => tags.append(element("li", "", capability)));
-      const links = element("div", "meta-links");
-      const videoLink = element("a", "", "Download MP4 ↘");
-      videoLink.href = `videos/${slug}.mp4`;
-      videoLink.download = "";
-      const patchLink = element("a", "", "View patch ↗");
-      patchLink.href = `patches/${slug}.kdl`;
-      links.append(videoLink, patchLink);
-      meta.append(tags, links);
-      copy.append(description, meta);
-      article.append(frame, copy);
-      return article;
-    }
-
     function catalogCard(record) {
       const [slug, title] = record;
-      const link = element("a", "catalog-card");
-      link.href = `#${slug}`;
-      link.setAttribute("aria-describedby", "catalog-help");
+      const button = element("button", "catalog-card");
+      button.type = "button";
+      button.dataset.slug = slug;
+      button.setAttribute("aria-describedby", "catalog-help");
+      button.setAttribute("aria-pressed", "false");
       const poster = element("img");
       poster.src = `posters/${slug}.png`;
       poster.alt = "";
@@ -105,15 +86,51 @@
       poster.height = 180;
       const label = element("span", "catalog-label");
       label.append(
-        element("small", "", `VIDEO S/${slug.slice(0, 2)}`),
+        element("small", "", `PLAY VIDEO S/${slug.slice(0, 2)}`),
         element("strong", "", title)
       );
-      link.append(poster, label);
-      return link;
+      button.append(poster, label);
+      button.addEventListener("click", () => selectStudy(record, true));
+      return button;
     }
 
+    function selectStudy(record, shouldPlay) {
+      const [slug, title, capabilities, highlight] = record;
+      const player = document.querySelector("#player");
+      document.querySelector("#now-playing-title").textContent = title;
+      document.querySelector("#player-description").textContent = highlight;
+      document.querySelector("#player-index").textContent = `S/${slug.slice(0, 2)}`;
+      document.querySelector("#video-link").href = `videos/${slug}.mp4`;
+      document.querySelector("#patch-link").href = `patches/${slug}.kdl`;
+      document.querySelector("#player-capabilities").replaceChildren(
+        ...capabilities.split(",").map((capability) => element("li", "", capability))
+      );
+      document.querySelectorAll(".catalog-card").forEach((card) => {
+        card.setAttribute("aria-pressed", String(card.dataset.slug === slug));
+      });
+      player.poster = `posters/${slug}.png`;
+      player.src = `videos/${slug}.mp4`;
+      player.load();
+      document.querySelector("#player-status").textContent = shouldPlay
+        ? `Loading video S/${slug.slice(0, 2)}…`
+        : `Video S/${slug.slice(0, 2)} is ready.`;
+      history.replaceState(null, "", `#${slug}`);
+      if (shouldPlay) {
+        player.play().then(() => {
+          document.querySelector("#player-status").textContent = `Playing video S/${slug.slice(0, 2)}.`;
+        }).catch(() => {
+          document.querySelector("#player-status").textContent = "Tap play in the video player to begin.";
+        });
+        document.querySelector("#now-playing-title").scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
+    document.querySelector("#player").addEventListener("error", () => {
+      document.querySelector("#player-status").textContent =
+        "This browser could not play the inline video. Use Open MP4 for native playback.";
+    });
+
     async function loadGallery() {
-      const gallery = document.querySelector("#gallery");
       try {
         const response = await fetch("showcase.tsv", { cache: "no-cache" });
         if (!response.ok) throw new Error(`manifest request failed: ${response.status}`);
@@ -124,18 +141,18 @@
           throw new Error("manifest does not contain a complete study inventory");
         }
         document.querySelector("#study-count").textContent = `${records.length} AUTHORED STUDIES`;
+        document.querySelector("#player-count").textContent = `1 PLAYER · ${records.length} VIDEOS`;
         document.querySelector("#footer-count").textContent = `${records.length} PATCHES · ${records.length} VIDEOS`;
-        const narrowScreen = window.matchMedia("(max-width: 720px)").matches;
-        document.querySelector("#catalog-help").textContent = narrowScreen
-          ? `All ${records.length} videos are below. Swipe this one-row index sideways, or jump straight to the players.`
-          : `All ${records.length} videos are shown here. Select any preview to jump to its full player.`;
+        document.querySelector("#catalog-help").textContent =
+          `All ${records.length} video choices are visible in this grid. Tap any thumbnail to load it in the player above.`;
         document.querySelector("#catalog").replaceChildren(...records.slice().reverse().map(catalogCard));
-        gallery.replaceChildren(...records.reverse().map(studyCard));
+        const requestedSlug = location.hash.slice(1);
+        selectStudy(records.find(([slug]) => slug === requestedSlug) || records.at(-1), false);
       } catch (error) {
         document.querySelector("#catalog").replaceChildren(
           element("p", "load-error", `Study index unavailable: ${error.message}`)
         );
-        gallery.replaceChildren(element("p", "load-error", `Gallery unavailable: ${error.message}`));
+        document.querySelector("#player-status").textContent = `Gallery unavailable: ${error.message}`;
       }
     }
 
