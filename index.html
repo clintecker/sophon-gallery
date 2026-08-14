@@ -25,9 +25,13 @@
 
     <nav class="catalog-wrap" aria-labelledby="catalog-title">
       <div class="section-heading">
-        <p>FULL CATALOG</p>
-        <h2 id="catalog-title">Choose a study.</h2>
+        <div>
+          <p>FULL CATALOG</p>
+          <h2 id="catalog-title">Choose a study.</h2>
+        </div>
+        <a class="watch-all" href="#gallery">Watch every video ↓</a>
       </div>
+      <p class="catalog-help" id="catalog-help">Swipe the previews, tap one to jump to its player, or continue to all videos below.</p>
       <div class="catalog" id="catalog">
         <p class="loading" role="status">Loading study index…</p>
       </div>
@@ -92,6 +96,7 @@
       const [slug, title] = record;
       const link = element("a", "catalog-card");
       link.href = `#${slug}`;
+      link.setAttribute("aria-describedby", "catalog-help");
       const poster = element("img");
       poster.src = `posters/${slug}.png`;
       poster.alt = "";
