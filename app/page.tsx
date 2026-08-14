@@ -1,14 +1,7 @@
 import { GalleryPlaylist } from "./gallery-playlist";
 import { studies } from "./works";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ study?: string }>;
-}) {
-  const requested = (await searchParams).study;
-  const active = studies.find((study) => study.slug === requested) ?? studies[0];
-
+export default function Home() {
   return (
     <main>
       <header className="hero">
@@ -22,7 +15,7 @@ export default async function Home({
         <div className="hero-rule"><span>26 AUTHORED STUDIES</span><span>AUG 2026</span></div>
       </header>
 
-      <GalleryPlaylist active={active} studies={studies} />
+      <GalleryPlaylist studies={studies} />
 
       <footer>
         <strong>SOPHON</strong>

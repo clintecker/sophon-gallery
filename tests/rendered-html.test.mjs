@@ -39,16 +39,6 @@ test("publishes every authored study with its media and patch", async () => {
   }
 });
 
-test("loads any catalog choice into the single mobile-safe player", async () => {
-  const response = await render("http://localhost/?study=00-scene-checker");
-  assert.equal(response.status, 200);
-
-  const html = await response.text();
-  assert.match(html, /<video[^>]+src="\/videos\/00-scene-checker\.mp4"/);
-  assert.match(html, /<h2>Scene Checker<\/h2>/);
-  assert.match(html, /data-study-select="00-scene-checker" aria-current="true"/);
-});
-
 test("server-renders the complete accessible gallery", async () => {
   const response = await render();
   assert.equal(response.status, 200);
@@ -57,14 +47,15 @@ test("server-renders the complete accessible gallery", async () => {
   const html = await response.text();
   assert.match(html, /<title>Sophon — 26 Live Visual Studies<\/title>/i);
   assert.match(html, /26 authored studies/i);
-  assert.match(html, /26 \/ 26 available/i);
+  assert.match(html, /26 \/ 26 playable videos/i);
   assert.match(html, /property="og:image" content="http:\/\/localhost\/og\.png"/i);
   assert.match(html, /Rotating Crystal Mandala/);
   assert.match(html, /Scene Checker/);
-  assert.equal((html.match(/<video\b/g) ?? []).length, 1);
-  assert.equal((html.match(/<img\b/g) ?? []).length, 26);
+  assert.equal((html.match(/<video\b/g) ?? []).length, 26);
+  assert.equal((html.match(/preload="none"/g) ?? []).length, 26);
+  assert.equal((html.match(/data-study-video=/g) ?? []).length, 26);
+  assert.equal((html.match(/<img\b/g) ?? []).length, 0);
   assert.equal((html.match(/autoPlay|autoplay/g) ?? []).length, 0);
-  assert.equal((html.match(/data-study-select=/g) ?? []).length, 26);
   assert.equal((html.match(/<a href="\/videos\//g) ?? []).length, 26);
   assert.equal((html.match(/<a href="\/patches\//g) ?? []).length, 26);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|MORE STUDIES IN PROGRESS/i);
