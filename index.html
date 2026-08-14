@@ -23,6 +23,16 @@
       <div class="hero-rule"><span id="study-count">LOADING STUDIES</span><span>AUG 2026</span></div>
     </header>
 
+    <nav class="catalog-wrap" aria-labelledby="catalog-title">
+      <div class="section-heading">
+        <p>FULL CATALOG</p>
+        <h2 id="catalog-title">Choose a study.</h2>
+      </div>
+      <div class="catalog" id="catalog">
+        <p class="loading" role="status">Loading study index…</p>
+      </div>
+    </nav>
+
     <section class="gallery" id="gallery" aria-label="Sophon visual studies">
       <p class="loading" role="status">Loading all studies…</p>
     </section>
@@ -41,6 +51,7 @@
     function studyCard(record) {
       const [slug, title, capabilities, highlight] = record;
       const article = element("article", "study");
+      article.id = slug;
       const frame = element("div", "frame");
       const video = element("video");
       video.controls = true;
@@ -77,6 +88,25 @@
       return article;
     }
 
+    function catalogCard(record) {
+      const [slug, title] = record;
+      const link = element("a", "catalog-card");
+      link.href = `#${slug}`;
+      const poster = element("img");
+      poster.src = `posters/${slug}.png`;
+      poster.alt = "";
+      poster.loading = "lazy";
+      poster.width = 320;
+      poster.height = 180;
+      const label = element("span", "catalog-label");
+      label.append(
+        element("small", "", `S/${slug.slice(0, 2)}`),
+        element("strong", "", title)
+      );
+      link.append(poster, label);
+      return link;
+    }
+
     async function loadGallery() {
       const gallery = document.querySelector("#gallery");
       try {
@@ -90,8 +120,12 @@
         }
         document.querySelector("#study-count").textContent = `${records.length} AUTHORED STUDIES`;
         document.querySelector("#footer-count").textContent = `${records.length} PATCHES · ${records.length} VIDEOS`;
+        document.querySelector("#catalog").replaceChildren(...records.slice().reverse().map(catalogCard));
         gallery.replaceChildren(...records.reverse().map(studyCard));
       } catch (error) {
+        document.querySelector("#catalog").replaceChildren(
+          element("p", "load-error", `Study index unavailable: ${error.message}`)
+        );
         gallery.replaceChildren(element("p", "load-error", `Gallery unavailable: ${error.message}`));
       }
     }

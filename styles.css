@@ -10,6 +10,18 @@ h1 { margin: 34px 0 28px; font-size: clamp(58px, 10.4vw, 150px); font-weight: 52
 h1 em { color: var(--acid); font-family: Georgia, serif; font-weight: 400; }
 .hero > p { max-width: 610px; margin: 0 0 58px auto; color: var(--muted); font-size: clamp(17px, 2vw, 24px); line-height: 1.5; }
 .hero-rule { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 13px; color: var(--muted); font: 500 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; }
+.catalog-wrap { border-top: 1px solid var(--line); padding: 64px 0 40px; }
+.section-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 28px; }
+.section-heading p { margin: 0; color: var(--acid); font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; }
+.section-heading h2 { margin: 0; }
+.catalog { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.catalog-card { position: relative; min-width: 0; overflow: hidden; border: 1px solid var(--line); background: #111116; color: var(--ink); text-decoration: none; }
+.catalog-card img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #030308; filter: saturate(.86) brightness(.84); transition: filter 160ms ease, transform 160ms ease; }
+.catalog-card:hover img, .catalog-card:focus-visible img { filter: saturate(1.08) brightness(1); transform: scale(1.025); }
+.catalog-card:focus-visible { outline: 2px solid var(--acid); outline-offset: 3px; }
+.catalog-label { display: grid; gap: 5px; padding: 11px 12px 13px; }
+.catalog-label small { color: var(--acid); font: 600 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; }
+.catalog-label strong { overflow: hidden; font-size: 13px; font-weight: 560; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .gallery { display: grid; gap: 150px; padding: 90px 0 160px; }
 .study:nth-child(even) { width: 84%; margin-left: auto; }
 .frame { position: relative; overflow: hidden; border: 1px solid var(--line); background: #111116; }
@@ -35,6 +47,12 @@ footer span { font: 500 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; le
   .hero { min-height: 70svh; padding-top: 48px; }
   h1 { font-size: clamp(56px, 20vw, 92px); }
   .hero > p { margin-left: 0; margin-bottom: 42px; font-size: 17px; }
+  .catalog-wrap { padding-top: 44px; }
+  .section-heading { display: block; }
+  .section-heading p { margin-bottom: 12px; }
+  .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .catalog-label { padding: 9px 9px 11px; }
+  .catalog-label strong { font-size: 11px; }
   .gallery { gap: 90px; padding: 55px 0 110px; }
   .study:nth-child(even) { width: 100%; }
   .study-copy { grid-template-columns: 1fr; gap: 26px; }
