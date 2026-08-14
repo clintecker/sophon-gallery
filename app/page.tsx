@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { studies } from "./works";
 
 export default function Home() {
@@ -10,13 +11,36 @@ export default function Home() {
           Twenty-six deterministic visual programs, rendered by Sophon. Tap any
           study to play it; download the video or inspect the authored patch.
         </p>
-        <a className="catalog-link" href="#catalog">Explore all 26 studies <span>↓</span></a>
+        <a className="catalog-link" href="#all-studies">See all 26 videos <span>↓</span></a>
         <div className="hero-rule"><span>26 AUTHORED STUDIES</span><span>AUG 2026</span></div>
       </header>
 
+      <nav className="study-index" id="all-studies" aria-label="All 26 video studies">
+        <div className="index-heading">
+          <p>Complete video catalog</p>
+          <strong>26 / 26 online</strong>
+        </div>
+        <ol>
+          {studies.map((work) => (
+            <li key={work.slug}>
+              <a href={`#${work.slug}`}>
+                <Image
+                  src={`/posters/${work.slug}.png`}
+                  alt=""
+                  width={320}
+                  height={180}
+                />
+                <span>{work.slug.slice(0, 2)}</span>
+                <strong>{work.title}</strong>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </nav>
+
       <section className="gallery" id="catalog" aria-label="Sophon visual studies">
         {studies.map((work) => (
-          <article className="study" key={work.slug}>
+          <article className="study" id={work.slug} key={work.slug}>
             <div className="frame">
               <video
                 controls
