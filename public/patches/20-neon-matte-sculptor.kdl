@@ -1,0 +1,100 @@
+// Two soft keyed energies are grown into a magenta aura and shrunk into an electric-blue core.
+patch id="example-neon-matte-sculptor" {
+    output width=180 height=90 rate-hz=30
+
+    node "gradient" id="space" label="Flicker-free midnight depth" {
+        axis "radial"
+        sample-a coverage-r=0.006 coverage-g=0.002 coverage-b=0.028 coverage-a=1.0 emission-r=0.015 emission-g=0.0 emission-b=0.08
+        sample-b coverage-r=0.001 coverage-g=0.001 coverage-b=0.008 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.01
+    }
+    node "gradient" id="green-stage" label="Synthetic green stage" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.65 coverage-b=0.025 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.65 coverage-b=0.025 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+
+    node "gradient" id="magenta-energy" label="Soft magenta energy on green" {
+        axis "radial"
+        sample-a coverage-r=0.9 coverage-g=0.0 coverage-b=0.55 coverage-a=1.0 emission-r=2.0 emission-g=0.0 emission-b=1.2
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="magenta-take" label="Magenta green-screen take"
+    node "chroma-key" id="key-magenta" label="Create a soft magenta matte" {
+        key-red 0.0
+        key-green 0.65
+        key-blue 0.025
+        threshold 0.36 unit="ratio"
+        softness 0.30 unit="ratio"
+    }
+    node "matte-morphology" id="grow-magenta" label="Grow the magenta aura" {
+        mode "grow"
+        radius 5 unit="px"
+    }
+    node "scroll" id="magenta-orbit" label="Move the grown aura" {
+        x-offset -52 unit="px"
+        y-offset -17 unit="px"
+        x-per-frame 6 unit="px"
+        y-per-frame 3 unit="px"
+    }
+
+    node "gradient" id="blue-energy" label="Soft electric-blue energy on green" {
+        axis "radial"
+        sample-a coverage-r=0.15 coverage-g=0.15 coverage-b=1.0 coverage-a=1.0 emission-r=0.2 emission-g=0.35 emission-b=2.8
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="blue-take" label="Electric-blue green-screen take"
+    node "chroma-key" id="key-blue" label="Create a soft electric-blue matte" {
+        key-red 0.0
+        key-green 0.65
+        key-blue 0.025
+        threshold 0.36 unit="ratio"
+        softness 0.30 unit="ratio"
+    }
+    node "matte-morphology" id="shrink-blue" label="Shrink the electric-blue core" {
+        mode "shrink"
+        radius 5 unit="px"
+    }
+    node "scroll" id="blue-orbit" label="Counter-move the shrunken core" {
+        x-offset 52 unit="px"
+        y-offset -17 unit="px"
+        x-per-frame -6 unit="px"
+        y-per-frame 3 unit="px"
+    }
+
+    node "composite" id="sculpted-pair" label="Grown aura and shrunken core"
+    node "mirror" id="opposite-pair" label="Opposing matte sculptures" {
+        axis "both"
+    }
+    node "composite" id="four-sculptures" label="Four moving matte sculptures"
+    node "blur" id="sculpture-halo" label="Soft shared glow" {
+        radius 6 unit="px"
+    }
+    node "modulate" id="sculpture-core" label="Crisp controlled cores" {
+        amount 0.68 unit="ratio"
+    }
+    node "composite" id="bloomed-sculptures" label="Glow and crisp cores"
+    node "composite" id="program-image" label="Neon matte sculptor in space"
+
+    connect id="magenta-stage" from="green-stage.image" to="magenta-take.background"
+    connect id="magenta-subject" from="magenta-energy.image" to="magenta-take.foreground"
+    connect id="magenta-key" from="magenta-take.image" to="key-magenta.image"
+    connect id="magenta-grow" from="key-magenta.image" to="grow-magenta.image"
+    connect id="magenta-motion" from="grow-magenta.image" to="magenta-orbit.image"
+    connect id="blue-stage" from="green-stage.image" to="blue-take.background"
+    connect id="blue-subject" from="blue-energy.image" to="blue-take.foreground"
+    connect id="blue-key" from="blue-take.image" to="key-blue.image"
+    connect id="blue-shrink" from="key-blue.image" to="shrink-blue.image"
+    connect id="blue-motion" from="shrink-blue.image" to="blue-orbit.image"
+    connect id="magenta-layer" from="magenta-orbit.image" to="sculpted-pair.background"
+    connect id="blue-layer" from="blue-orbit.image" to="sculpted-pair.foreground"
+    connect id="reflect-pair" from="sculpted-pair.image" to="opposite-pair.image"
+    connect id="original-pair" from="sculpted-pair.image" to="four-sculptures.background"
+    connect id="reflected-pair" from="opposite-pair.image" to="four-sculptures.foreground"
+    connect id="halo" from="four-sculptures.image" to="sculpture-halo.image"
+    connect id="core" from="four-sculptures.image" to="sculpture-core.image"
+    connect id="halo-layer" from="sculpture-halo.image" to="bloomed-sculptures.background"
+    connect id="core-layer" from="sculpture-core.image" to="bloomed-sculptures.foreground"
+    connect id="space-layer" from="space.image" to="program-image.background"
+    connect id="sculpture-layer" from="bloomed-sculptures.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

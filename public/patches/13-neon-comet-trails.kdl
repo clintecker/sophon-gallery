@@ -1,0 +1,78 @@
+// Three moving lights paint persistent colored trails across a midnight grid.
+patch id="example-neon-comet-trails" {
+    output width=240 height=135 rate-hz=30
+
+    node "scene-checker" id="midnight-grid" label="Midnight depth grid" {
+        cell-size 15 unit="px"
+        sample-a coverage-r=0.002 coverage-g=0.004 coverage-b=0.012 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.008 coverage-g=0.016 coverage-b=0.045 coverage-a=1.0 emission-r=0.0 emission-g=0.015 emission-b=0.04
+    }
+    node "gradient" id="cyan-comet" label="Cyan comet core" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.02 emission-g=1.1 emission-b=2.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="core-matte" label="Shared soft core matte" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="cyan-core" label="Tight cyan comet core"
+    node "scroll" id="cyan-flight" label="Cyan rising flight" {
+        x-offset -82 unit="px"
+        y-offset 34 unit="px"
+        x-per-frame 7 unit="px"
+        y-per-frame -3 unit="px"
+    }
+    node "gradient" id="magenta-comet" label="Magenta comet core" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=2.0 emission-g=0.0 emission-b=0.5
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="magenta-core" label="Tight magenta comet core"
+    node "scroll" id="magenta-flight" label="Magenta diving flight" {
+        x-offset 76 unit="px"
+        y-offset -36 unit="px"
+        x-per-frame -5 unit="px"
+        y-per-frame 4 unit="px"
+    }
+    node "gradient" id="gold-comet" label="Gold comet core" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=1.7 emission-g=0.7 emission-b=0.02
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="gold-core" label="Tight gold comet core"
+    node "scroll" id="gold-flight" label="Gold crossing flight" {
+        x-offset -12 unit="px"
+        y-offset -52 unit="px"
+        x-per-frame 2 unit="px"
+        y-per-frame 5 unit="px"
+    }
+    node "composite" id="cyan-magenta" label="Crossing cyan and magenta comets"
+    node "composite" id="current-comets" label="All current comet light"
+    node "modulate" id="memory-decay" label="Long luminous trail decay" {
+        amount 0.58 unit="ratio"
+    }
+    node "composite" id="trail" label="Accumulated comet trails"
+    node "composite" id="program-image" label="Comet trails over midnight grid"
+
+    connect id="cyan-light" from="cyan-comet.image" to="cyan-core.image"
+    connect id="cyan-shape" from="core-matte.image" to="cyan-core.mask"
+    connect id="cyan-motion" from="cyan-core.image" to="cyan-flight.image"
+    connect id="magenta-light" from="magenta-comet.image" to="magenta-core.image"
+    connect id="magenta-shape" from="core-matte.image" to="magenta-core.mask"
+    connect id="magenta-motion" from="magenta-core.image" to="magenta-flight.image"
+    connect id="gold-light" from="gold-comet.image" to="gold-core.image"
+    connect id="gold-shape" from="core-matte.image" to="gold-core.mask"
+    connect id="gold-motion" from="gold-core.image" to="gold-flight.image"
+    connect id="cyan-layer" from="cyan-flight.image" to="cyan-magenta.background"
+    connect id="magenta-layer" from="magenta-flight.image" to="cyan-magenta.foreground"
+    connect id="two-comets" from="cyan-magenta.image" to="current-comets.background"
+    connect id="gold-layer" from="gold-flight.image" to="current-comets.foreground"
+    connect id="previous-trail" from="trail.image" to="memory-decay.image" timing="previous-frame"
+    connect id="fading-history" from="memory-decay.image" to="trail.background"
+    connect id="fresh-light" from="current-comets.image" to="trail.foreground"
+    connect id="grid" from="midnight-grid.image" to="program-image.background"
+    connect id="comet-light" from="trail.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

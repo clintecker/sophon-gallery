@@ -1,0 +1,36 @@
+// Two independent animated emission fields cross over a dark vertical gradient.
+patch id="example-dual-energy-storm" {
+    output width=32 height=18 rate-hz=30
+
+    node "gradient" id="sky" label="Midnight sky" {
+        axis "vertical"
+        sample-a coverage-r=0.01 coverage-g=0.01 coverage-b=0.04 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.12 coverage-g=0.01 coverage-b=0.18 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "noise" id="cyan-field" label="Cyan energy" {
+        seed 808
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.15 emission-g=2.8 emission-b=3.4
+    }
+    node "noise" id="magenta-field" label="Magenta energy" {
+        seed 809
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=3.2 emission-g=0.12 emission-b=2.1
+    }
+    node "modulate" id="cyan-level" label="Cyan level" {
+        amount 0.52 unit="ratio"
+    }
+    node "modulate" id="magenta-level" label="Magenta level" {
+        amount 0.38 unit="ratio"
+    }
+    node "composite" id="cyan-over-sky" label="Cyan over sky"
+    node "composite" id="final" label="Crossed energy fields"
+
+    connect id="cyan-source" from="cyan-field.image" to="cyan-level.image"
+    connect id="magenta-source" from="magenta-field.image" to="magenta-level.image"
+    connect id="sky" from="sky.image" to="cyan-over-sky.background"
+    connect id="cyan" from="cyan-level.image" to="cyan-over-sky.foreground"
+    connect id="cyan-scene" from="cyan-over-sky.image" to="final.background"
+    connect id="magenta" from="magenta-level.image" to="final.foreground"
+    sink id="program" input="final.image"
+}
