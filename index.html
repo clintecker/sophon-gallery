@@ -33,7 +33,7 @@
         <span class="player-count" id="player-count">LOADING CATALOG</span>
       </div>
       <div class="frame">
-        <video id="player" controls loop muted playsinline preload="metadata">H.264 playback is unavailable here. Use “Open MP4” below.</video>
+        <video id="player" aria-label="Selected Sophon study video" controls loop muted playsinline preload="metadata">H.264 playback is unavailable here. Use “Open MP4” below.</video>
         <span class="index" id="player-index">S/—</span>
       </div>
       <div class="player-copy">
@@ -94,9 +94,12 @@
       return button;
     }
 
+    let selectionSequence = 0;
+
     function selectStudy(record, shouldPlay) {
       const [slug, title, capabilities, highlight] = record;
       const player = document.querySelector("#player");
+      const selection = ++selectionSequence;
       document.querySelector("#now-playing-title").textContent = title;
       document.querySelector("#player-description").textContent = highlight;
       document.querySelector("#player-index").textContent = `S/${slug.slice(0, 2)}`;
@@ -109,26 +112,37 @@
         card.setAttribute("aria-pressed", String(card.dataset.slug === slug));
       });
       player.poster = `posters/${slug}.png`;
+      player.setAttribute("aria-label", `Video S/${slug.slice(0, 2)}: ${title}`);
       player.src = `videos/${slug}.mp4`;
+      document.querySelector("#player-status").textContent = `Loading video S/${slug.slice(0, 2)}…`;
+      player.addEventListener("canplay", () => {
+        if (selection === selectionSequence) {
+          document.querySelector("#player-status").textContent = player.paused
+            ? `Video S/${slug.slice(0, 2)} is ready.`
+            : `Playing video S/${slug.slice(0, 2)}.`;
+        }
+      }, { once: true });
+      player.addEventListener("error", () => {
+        if (selection === selectionSequence) {
+          document.querySelector("#player-status").textContent =
+            "This browser could not play the inline video. Use Open MP4 for native playback.";
+        }
+      }, { once: true });
       player.load();
-      document.querySelector("#player-status").textContent = shouldPlay
-        ? `Loading video S/${slug.slice(0, 2)}…`
-        : `Video S/${slug.slice(0, 2)} is ready.`;
       history.replaceState(null, "", `#${slug}`);
       if (shouldPlay) {
         player.play().then(() => {
-          document.querySelector("#player-status").textContent = `Playing video S/${slug.slice(0, 2)}.`;
+          if (selection === selectionSequence) {
+            document.querySelector("#player-status").textContent = `Playing video S/${slug.slice(0, 2)}.`;
+          }
         }).catch(() => {
-          document.querySelector("#player-status").textContent = "Tap play in the video player to begin.";
+          if (selection === selectionSequence) {
+            document.querySelector("#player-status").textContent = "Tap play in the video player to begin.";
+          }
         });
         document.querySelector("#now-playing-title").scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
-
-    document.querySelector("#player").addEventListener("error", () => {
-      document.querySelector("#player-status").textContent =
-        "This browser could not play the inline video. Use Open MP4 for native playback.";
-    });
 
     async function loadGallery() {
       try {
