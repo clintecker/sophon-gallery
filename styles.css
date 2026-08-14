@@ -14,6 +14,8 @@ h1 em { color: var(--acid); font-family: Georgia, serif; font-weight: 400; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 28px; margin-bottom: 28px; }
 .section-heading p { margin: 0; color: var(--acid); font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; }
 .section-heading h2 { margin: 0; }
+.watch-all { flex: none; color: var(--ink); font: 600 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .08em; text-decoration: none; text-transform: uppercase; border-bottom: 1px solid var(--acid); padding-bottom: 7px; }
+.catalog-help { margin: -12px 0 24px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 .catalog { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .catalog-card { position: relative; min-width: 0; overflow: hidden; border: 1px solid var(--line); background: #111116; color: var(--ink); text-decoration: none; }
 .catalog-card img { display: block; width: 100%; aspect-ratio: 16/9; object-fit: cover; background: #030308; filter: saturate(.86) brightness(.84); transition: filter 160ms ease, transform 160ms ease; }
@@ -48,9 +50,13 @@ footer span { font: 500 9px/1 ui-monospace, SFMono-Regular, Menlo, monospace; le
   h1 { font-size: clamp(56px, 20vw, 92px); }
   .hero > p { margin-left: 0; margin-bottom: 42px; font-size: 17px; }
   .catalog-wrap { padding-top: 44px; }
-  .section-heading { display: block; }
+  .section-heading { align-items: start; }
   .section-heading p { margin-bottom: 12px; }
-  .catalog { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .section-heading h2 { font-size: 32px; }
+  .watch-all { margin-top: 5px; text-align: right; }
+  .catalog-help { margin-top: -10px; }
+  .catalog { display: flex; gap: 8px; overflow-x: auto; padding: 3px 2px 14px; scroll-snap-type: x mandatory; scrollbar-color: var(--acid) var(--line); }
+  .catalog-card { flex: 0 0 min(76vw, 300px); scroll-snap-align: start; }
   .catalog-label { padding: 9px 9px 11px; }
   .catalog-label strong { font-size: 11px; }
   .gallery { gap: 90px; padding: 55px 0 110px; }
