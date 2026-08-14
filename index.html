@@ -20,52 +20,83 @@
       <div class="eyebrow"><span></span> PROJECT SOPHON · LIVE STUDIES</div>
       <h1>Signal becomes<br><em>visible.</em></h1>
       <p>A remote gallery of deterministic, authored visual programs. Every clip is rendered by Sophon—not a design mockup.</p>
-      <div class="hero-rule"><span>VOL. 01</span><span>AUG 2026</span></div>
+      <div class="hero-rule"><span id="study-count">LOADING STUDIES</span><span>AUG 2026</span></div>
     </header>
 
-    <section class="gallery" aria-label="Sophon visual studies">
-      <article class="study">
-        <div class="frame">
-          <video autoplay controls loop muted playsinline poster="posters/25-rotating-crystal-mandala.jpg" preload="metadata">
-            <source src="videos/25-rotating-crystal-mandala.mp4" type="video/mp4">
-            Your browser does not support H.264 video playback.
-          </video>
-          <span class="index">S/25</span>
-        </div>
-        <div class="study-copy">
-          <div>
-            <h2>Rotating Crystal Mandala</h2>
-            <p>Authored affine motion turns a crystalline source around an explicit pivot while preserving its transparent edge contract.</p>
-          </div>
-          <div class="meta">
-            <ul aria-label="Primitives used"><li>transform</li><li>rotation</li><li>mirror</li><li>gradient</li></ul>
-            <a href="videos/25-rotating-crystal-mandala.mp4" download>Download MP4 <span>↘</span></a>
-          </div>
-        </div>
-      </article>
-
-      <article class="study">
-        <div class="frame">
-          <video autoplay controls loop muted playsinline poster="posters/17-glowing-neon-kaleidoscope.jpg" preload="metadata">
-            <source src="videos/17-glowing-neon-kaleidoscope.mp4" type="video/mp4">
-            Your browser does not support H.264 video playback.
-          </video>
-          <span class="index">S/17</span>
-        </div>
-        <div class="study-copy">
-          <div>
-            <h2>Glowing Neon Kaleidoscope</h2>
-            <p>Layered gradients, mirror symmetry, blur, modulation, and additive emission form a seamless one-second loop.</p>
-          </div>
-          <div class="meta">
-            <ul aria-label="Primitives used"><li>emission</li><li>blur</li><li>modulate</li><li>composite</li></ul>
-            <a href="videos/17-glowing-neon-kaleidoscope.mp4" download>Download MP4 <span>↘</span></a>
-          </div>
-        </div>
-      </article>
+    <section class="gallery" id="gallery" aria-label="Sophon visual studies">
+      <p class="loading" role="status">Loading all studies…</p>
     </section>
+    <noscript><p class="load-error">JavaScript is required to load the gallery index. Direct MP4 files remain available in the repository.</p></noscript>
 
-    <footer><strong>SOPHON</strong><p>Professional real-time generative visuals, built from explicit signals.</p><span>MORE STUDIES IN PROGRESS</span></footer>
+    <footer><strong>SOPHON</strong><p>Professional real-time generative visuals, built from explicit signals.</p><span id="footer-count">PATCHES · VIDEOS</span></footer>
   </main>
+  <script>
+    function element(name, className, text) {
+      const node = document.createElement(name);
+      if (className) node.className = className;
+      if (text) node.textContent = text;
+      return node;
+    }
+
+    function studyCard(record) {
+      const [slug, title, capabilities, highlight] = record;
+      const article = element("article", "study");
+      const frame = element("div", "frame");
+      const video = element("video");
+      video.controls = true;
+      video.loop = true;
+      video.muted = true;
+      video.defaultMuted = true;
+      video.setAttribute("muted", "");
+      video.playsInline = true;
+      video.preload = "none";
+      video.poster = `posters/${slug}.png`;
+      const source = element("source");
+      source.src = `videos/${slug}.mp4`;
+      source.type = "video/mp4";
+      video.append(source, document.createTextNode("Your browser does not support H.264 video playback."));
+      frame.append(video, element("span", "index", `S/${slug.slice(0, 2)}`));
+
+      const copy = element("div", "study-copy");
+      const description = element("div");
+      description.append(element("h2", "", title), element("p", "", highlight));
+      const meta = element("div", "meta");
+      const tags = element("ul");
+      tags.setAttribute("aria-label", "Primitives used");
+      capabilities.split(",").forEach((capability) => tags.append(element("li", "", capability)));
+      const links = element("div", "meta-links");
+      const videoLink = element("a", "", "Download MP4 ↘");
+      videoLink.href = `videos/${slug}.mp4`;
+      videoLink.download = "";
+      const patchLink = element("a", "", "View patch ↗");
+      patchLink.href = `patches/${slug}.kdl`;
+      links.append(videoLink, patchLink);
+      meta.append(tags, links);
+      copy.append(description, meta);
+      article.append(frame, copy);
+      return article;
+    }
+
+    async function loadGallery() {
+      const gallery = document.querySelector("#gallery");
+      try {
+        const response = await fetch("showcase.tsv", { cache: "no-cache" });
+        if (!response.ok) throw new Error(`manifest request failed: ${response.status}`);
+        const lines = (await response.text()).trim().split("\n");
+        const records = lines.slice(1).map((line) => line.split("\t"));
+        if (lines[0] !== "slug\ttitle\tcapabilities\thighlight" ||
+            records.length === 0 || records.some((record) => record.length !== 4)) {
+          throw new Error("manifest does not contain a complete study inventory");
+        }
+        document.querySelector("#study-count").textContent = `${records.length} AUTHORED STUDIES`;
+        document.querySelector("#footer-count").textContent = `${records.length} PATCHES · ${records.length} VIDEOS`;
+        gallery.replaceChildren(...records.reverse().map(studyCard));
+      } catch (error) {
+        gallery.replaceChildren(element("p", "load-error", `Gallery unavailable: ${error.message}`));
+      }
+    }
+
+    loadGallery();
+  </script>
 </body>
 </html>

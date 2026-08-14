@@ -1,0 +1,77 @@
+// An imported cosmic portal fractures into two seamless moving light fields.
+patch id="example-cosmic-prism-gate" {
+    output width=240 height=135 rate-hz=30
+
+    node "still-image" id="cosmic-gate" label="Authored cosmic prism gate" {
+        asset "assets/cosmic-prism-gate.png"
+        color "embedded-srgb"
+        sizing "exact"
+    }
+    node "modulate" id="deep-gate" label="Rich portal background" {
+        amount 0.62 unit="ratio"
+    }
+    node "luma-key" id="prismatic-light" label="Extract the bright crystal light" {
+        mode "dark"
+        threshold 0.06 unit="ratio"
+        softness 0.32 unit="ratio"
+    }
+
+    node "scroll" id="solar-drift" label="Gold and cyan light sweeps southeast" {
+        x-offset -48 unit="px"
+        y-offset -27 unit="px"
+        x-per-frame 8 unit="px"
+        y-per-frame 9 unit="px"
+    }
+    node "mirror" id="solar-reflection" label="Four-corner solar reflection" {
+        axis "both"
+    }
+    node "composite" id="solar-field" label="Crossing solar crystal field"
+
+    node "scroll" id="aurora-drift" label="Prismatic light sweeps northwest" {
+        x-offset 72 unit="px"
+        y-offset 45 unit="px"
+        x-per-frame -8 unit="px"
+        y-per-frame -9 unit="px"
+    }
+    node "mirror" id="aurora-reflection" label="Horizontal aurora reflection" {
+        axis "left-right"
+    }
+    node "modulate" id="aurora-core" label="Controlled opposing crystal core" {
+        amount 0.68 unit="ratio"
+    }
+    node "composite" id="aurora-field" label="Crossing aurora crystal field"
+    node "composite" id="all-crystals" label="Counter-rotating prismatic light"
+
+    node "blur" id="portal-halo" label="Wide luminous portal halo" {
+        radius 8 unit="px"
+    }
+    node "modulate" id="crystal-core" label="Crisp crystal detail" {
+        amount 0.78 unit="ratio"
+    }
+    node "composite" id="bloomed-crystals" label="Crisp light over soft bloom"
+    node "composite" id="program-image" label="Animated cosmic prism gate"
+
+    connect id="gate-background" from="cosmic-gate.image" to="deep-gate.image"
+    connect id="gate-light" from="cosmic-gate.image" to="prismatic-light.image"
+
+    connect id="solar-motion" from="prismatic-light.image" to="solar-drift.image"
+    connect id="solar-mirror" from="solar-drift.image" to="solar-reflection.image"
+    connect id="solar-original" from="solar-drift.image" to="solar-field.background"
+    connect id="solar-copy" from="solar-reflection.image" to="solar-field.foreground"
+
+    connect id="aurora-motion" from="prismatic-light.image" to="aurora-drift.image"
+    connect id="aurora-mirror" from="aurora-drift.image" to="aurora-reflection.image"
+    connect id="aurora-dim" from="aurora-reflection.image" to="aurora-core.image"
+    connect id="aurora-original" from="aurora-drift.image" to="aurora-field.background"
+    connect id="aurora-copy" from="aurora-core.image" to="aurora-field.foreground"
+
+    connect id="solar-layer" from="solar-field.image" to="all-crystals.background"
+    connect id="aurora-layer" from="aurora-field.image" to="all-crystals.foreground"
+    connect id="crystal-halo" from="all-crystals.image" to="portal-halo.image"
+    connect id="crystal-detail" from="all-crystals.image" to="crystal-core.image"
+    connect id="soft-light" from="portal-halo.image" to="bloomed-crystals.background"
+    connect id="sharp-light" from="crystal-core.image" to="bloomed-crystals.foreground"
+    connect id="base-image" from="deep-gate.image" to="program-image.background"
+    connect id="animated-light" from="bloomed-crystals.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

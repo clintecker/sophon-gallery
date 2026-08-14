@@ -1,0 +1,27 @@
+// The previous final image returns through a dimmer on the following frame.
+patch id="example-delayed-feedback" {
+    output width=24 height=14 rate-hz=60
+
+    node "gradient" id="background" label="Dark background" {
+        axis "horizontal"
+        sample-a coverage-r=0.01 coverage-g=0.02 coverage-b=0.08 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.30 coverage-g=0.02 coverage-b=0.18 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "noise" id="spark" label="Fresh sparks" {
+        seed 2026
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=3.0 emission-g=0.8 emission-b=0.2
+    }
+    node "modulate" id="history" label="History decay" {
+        amount 0.60 unit="ratio"
+    }
+    node "composite" id="fresh" label="Fresh image"
+    node "composite" id="final" label="Feedback program"
+
+    connect id="background" from="background.image" to="fresh.background"
+    connect id="spark" from="spark.image" to="fresh.foreground"
+    connect id="fresh" from="fresh.image" to="final.background"
+    connect id="previous-final" from="final.image" to="history.image" timing="previous-frame"
+    connect id="history" from="history.image" to="final.foreground"
+    sink id="program" input="final.image"
+}
