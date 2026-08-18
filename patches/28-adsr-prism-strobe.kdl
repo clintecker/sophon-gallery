@@ -1,0 +1,38 @@
+// A presentation-committed ADSR beat punches a rotating GPU prism grid in perfect replay.
+patch id="example-adsr-prism-strobe" {
+    output width=240 height=240 rate-hz=30
+    node "scene-checker" id="prism-grid" label="Electric cyan and ultraviolet prism grid" {
+        cell-size 18 unit="px"
+        sample-a coverage-r=0.035 coverage-g=0.002 coverage-b=0.055 coverage-a=1.0 emission-r=0.85 emission-g=0.01 emission-b=0.42
+        sample-b coverage-r=0.035 coverage-g=0.0 coverage-b=0.06 coverage-a=1.0 emission-r=0.08 emission-g=0.55 emission-b=1.2
+    }
+    node "transform" id="prism-motion" label="Beating rotated hyperspace grid" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.82 unit="ratio"
+        scale-y 0.82 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "modulate" id="impact-light" label="ADSR-controlled laser energy" {
+        amount 0.32 unit="ratio"
+    }
+    signal "gate" id="festival-clock" cycles=2 seconds=1 duty=0.2 phase=0.0
+    signal "envelope" id="impact" gate="festival-clock" attack-ms=40 decay-ms=120 sustain=0.22 release-ms=260
+    signal "lfo" id="turn" cycles=1 seconds=8 waveform="sine" phase=0.0
+    signal "lfo" id="orbit-x" cycles=1 seconds=4 waveform="sine" phase=0.0
+    signal "lfo" id="orbit-y" cycles=1 seconds=4 waveform="sine" phase=0.25
+    route id="impact-width" from="impact" to="prism-motion" parameter="transform/scale-x" mode="replace" scale=0.22 offset=0.72
+    route id="impact-height" from="impact" to="prism-motion" parameter="transform/scale-y" mode="replace" scale=0.22 offset=0.72
+    route id="impact-energy" from="impact" to="impact-light" parameter="modulate/amount" mode="replace" scale=0.68 offset=0.18
+    route id="turn-prism" from="turn" to="prism-motion" parameter="transform/rotation" mode="replace" scale=38.0 offset=0.0
+    route id="orbit-horizontal" from="orbit-x" to="prism-motion" parameter="transform/translation-x" mode="replace" scale=18.0 offset=0.0
+    route id="orbit-vertical" from="orbit-y" to="prism-motion" parameter="transform/translation-y" mode="replace" scale=18.0 offset=0.0
+    connect id="grid-motion" from="prism-grid.image" to="prism-motion.image"
+    connect id="motion-light" from="prism-motion.image" to="impact-light.image"
+    sink id="program" input="impact-light.image"
+}

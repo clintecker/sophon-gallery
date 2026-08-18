@@ -1,0 +1,38 @@
+// Live bass opens the iris, mids rotate it, treble nudges it, and onsets flash its core.
+patch id="example-audio-reactive-laser-iris" {
+    output width=240 height=240 rate-hz=30
+    node "gradient" id="laser-plasma" label="White-hot cyan and ultraviolet plasma iris" {
+        axis "radial"
+        sample-a coverage-r=0.015 coverage-g=0.075 coverage-b=0.12 coverage-a=0.82 emission-r=0.48 emission-g=1.12 emission-b=1.72
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "transform" id="audio-iris" label="Band-driven mirrored laser geometry" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.42 unit="ratio"
+        scale-y 0.68 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "modulate" id="laser-impact" label="Bass body with onset flash" {
+        amount 0.64 unit="ratio"
+    }
+    signal "audio-band" id="bass" band=1
+    signal "audio-band" id="mid" band=3
+    signal "audio-band" id="treble" band=5
+    signal "audio-onset" id="hit"
+    route id="bass-width" from="bass" to="audio-iris" parameter="transform/scale-x" mode="replace" scale=0.30 offset=0.36
+    route id="bass-height" from="bass" to="audio-iris" parameter="transform/scale-y" mode="replace" scale=-0.18 offset=0.78
+    route id="mid-rotation" from="mid" to="audio-iris" parameter="transform/rotation" mode="replace" scale=70.0 offset=-35.0
+    route id="treble-horizontal" from="treble" to="audio-iris" parameter="transform/translation-x" mode="replace" scale=38.0 offset=-19.0
+    route id="mid-vertical" from="mid" to="audio-iris" parameter="transform/translation-y" mode="replace" scale=24.0 offset=-12.0
+    route id="bass-energy" from="bass" to="laser-impact" parameter="modulate/amount" mode="replace" scale=0.22 offset=0.60
+    route id="onset-flash" from="hit" to="laser-impact" parameter="modulate/amount" mode="add" scale=0.16 offset=0.0
+    connect id="plasma-to-iris" from="laser-plasma.image" to="audio-iris.image"
+    connect id="iris-to-impact" from="audio-iris.image" to="laser-impact.image"
+    sink id="program" input="laser-impact.image"
+}

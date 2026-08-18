@@ -25,3 +25,7 @@ slug	title	capabilities	highlight
 23-hyperdimensional-aurora-engine	Hyperdimensional Aurora Engine	still-image,fill,bloom	Square artwork erupts through a widescreen crystal engine.
 24-aurora-clip-reactor	Aurora Clip Reactor	clip,h264,loop,bloom	Decoded H.264 motion is keyed reflected and bloomed.
 25-rotating-crystal-mandala	Rotating Crystal Mandala	transform,rotation,bloom	Counter-rotating cyan and gold crystal planes form a luminous spectral mandala.
+26-liquid-neon-cathedral	Liquid Neon Cathedral	displacement,transform,bloom	Counter-warped spectral ribbons breathe into a layered liquid-light cathedral.
+27-lfo-spectral-beacon	LFO Spectral Beacon	lfo,signals,transform	Four phase-shifted signals make one spectral light body orbit breathe rotate and pulse.
+28-adsr-prism-strobe	ADSR Prism Strobe	envelope,gate,signals	A presentation-committed beat punches a rotating GPU prism grid with deterministic attack decay sustain and release.
+29-audio-reactive-laser-iris	Audio-Reactive Laser Iris	audio,bands,onset,gpu	Live bass reshapes a mirrored laser iris while mids rotate treble throws and detected onsets flash it.

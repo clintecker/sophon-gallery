@@ -1,0 +1,35 @@
+// Four LFO signals drive six routes; one quarter-cycle offset makes the body orbit.
+patch id="example-lfo-spectral-beacon" {
+    output width=240 height=240 rate-hz=30
+    node "gradient" id="spectral-body" label="Cyan white and magenta light body" {
+        axis "radial"
+        sample-a coverage-r=0.02 coverage-g=0.12 coverage-b=0.18 coverage-a=0.9 emission-r=0.8 emission-g=0.05 emission-b=0.52
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "transform" id="orbit" label="Signal-driven mirrored orbit" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.24 unit="ratio"
+        scale-y 0.72 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "modulate" id="pulse" label="Breathing spectral energy" { amount 0.75 unit="ratio" }
+    signal "lfo" id="horizontal-orbit" cycles=1 seconds=6 waveform="sine" phase=0.0
+    signal "lfo" id="vertical-orbit" cycles=1 seconds=6 waveform="sine" phase=0.25
+    signal "lfo" id="breath" cycles=1 seconds=3 waveform="triangle" phase=0.0
+    signal "lfo" id="turn" cycles=1 seconds=8 waveform="sine" phase=0.0
+    route id="move-horizontal" from="horizontal-orbit" to="orbit" parameter="transform/translation-x" mode="replace" scale=54.0 offset=0.0
+    route id="move-vertical" from="vertical-orbit" to="orbit" parameter="transform/translation-y" mode="replace" scale=54.0 offset=0.0
+    route id="scale-horizontal" from="breath" to="orbit" parameter="transform/scale-x" mode="replace" scale=0.08 offset=0.24
+    route id="scale-vertical" from="breath" to="orbit" parameter="transform/scale-y" mode="replace" scale=0.16 offset=0.72
+    route id="rotate-lattice" from="turn" to="orbit" parameter="transform/rotation" mode="replace" scale=42.0 offset=0.0
+    route id="pulse-energy" from="breath" to="pulse" parameter="modulate/amount" mode="replace" scale=0.22 offset=0.76
+    connect id="body-orbit" from="spectral-body.image" to="orbit.image"
+    connect id="orbit-pulse" from="orbit.image" to="pulse.image"
+    sink id="program" input="pulse.image"
+}
