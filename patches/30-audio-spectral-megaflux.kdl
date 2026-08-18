@@ -1,0 +1,222 @@
+// Eight audio bands, onset, and phase-locked motion drive a layered festival-scale light engine.
+patch id="example-audio-spectral-megaflux" {
+    output width=320 height=180 rate-hz=30
+
+    node "gradient" id="midnight" label="Deep festival stage" {
+        axis "radial"
+        sample-a coverage-r=0.015 coverage-g=0.002 coverage-b=0.04 coverage-a=1.0 emission-r=0.025 emission-g=0.0 emission-b=0.09
+        sample-b coverage-r=0.001 coverage-g=0.0 coverage-b=0.006 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="cyan-source" label="Cyan spectral blade" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.01 emission-g=0.32 emission-b=0.8
+    }
+    node "gradient" id="magenta-source" label="Magenta spectral blade" {
+        axis "vertical"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.55 emission-g=0.005 emission-b=0.18
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "transform" id="cyan-blade" label="Bass-expanded cyan blade" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.3 unit="ratio"
+        scale-y 0.09 unit="ratio"
+        rotation 28.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "transform" id="magenta-blade" label="Bass-expanded magenta blade" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.09 unit="ratio"
+        scale-y 1.3 unit="ratio"
+        rotation -28.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "composite" id="spectral-cross" label="Crossed audio blades"
+
+    node "gradient" id="x-field" label="Horizontal liquid control field" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.08 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.88 coverage-g=0.88 coverage-b=0.88 coverage-a=0.94 emission-r=3.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="y-field" label="Vertical liquid control field" {
+        axis "vertical"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.1 emission-r=0.0 emission-g=3.0 emission-b=0.0
+        sample-b coverage-r=0.9 coverage-g=0.9 coverage-b=0.9 coverage-a=0.9 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "transform" id="x-motion" label="Mid-driven horizontal field" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.4 unit="ratio"
+        scale-y 1.4 unit="ratio"
+        rotation 16.0 unit="degrees"
+        rotation-per-frame 7.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "transform" id="y-motion" label="High-driven vertical field" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.35 unit="ratio"
+        scale-y 1.35 unit="ratio"
+        rotation -20.0 unit="degrees"
+        rotation-per-frame -9.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "displacement" id="spectral-warp" label="Four-band liquid displacement" {
+        amount-x 34.0 unit="px"
+        amount-y 30.0 unit="px"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "mirror" id="symmetric-energy" label="Festival-scale bilateral symmetry" { axis "left-right" }
+    node "transform" id="counter-prism" label="Counter-rotating airborne prism" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.58 unit="ratio"
+        scale-y 0.58 unit="ratio"
+        rotation 45.0 unit="degrees"
+        rotation-per-frame -11.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "composite" id="megaflux-core" label="Interlocked spectral core"
+    node "bloom" id="arena-glow" label="Onset-punched arena bloom" {
+        radius 14 unit="px"
+        intensity 0.28 unit="ratio"
+    }
+    node "modulate" id="crisp-energy" label="Bass-weighted crisp detail" { amount 0.2 unit="ratio" }
+    node "composite" id="lit-core" label="Bloom behind crisp core"
+    node "gradient" id="ring-matte" label="Hollow radial matte" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="cyan-ring-light" label="Cyan orbital light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=1.8 emission-b=3.4
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="gold-ring-light" label="Gold orbital light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=3.2 emission-g=1.15 emission-b=0.04
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="cyan-ring" label="Hollow cyan orbital"
+    node "mask" id="gold-ring" label="Hollow gold orbital"
+    node "transform" id="cyan-orbit" label="Presence-driven cyan ellipse" {
+        translation-x 54.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.34 unit="ratio"
+        scale-y 0.72 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 13.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "transform" id="gold-orbit" label="Treble-driven gold ellipse" {
+        translation-x -54.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.72 unit="ratio"
+        scale-y 0.3 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame -15.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "composite" id="orbital-pair" label="Counter-rotating audio orbitals"
+    node "mirror" id="orbital-reflection" label="Reflected orbital constellation" { axis "top-bottom" }
+    node "composite" id="orbital-field" label="Fourfold orbital constellation"
+    node "bloom" id="orbital-glow" label="Air-band orbital atmosphere" {
+        radius 8 unit="px"
+        intensity 0.48 unit="ratio"
+    }
+    node "composite" id="festival-engine" label="Orbitals over liquid spectral core"
+    node "composite" id="program-image" label="Finished audio spectral megaflux"
+
+    signal "audio-band" id="sub" band=0
+    signal "audio-band" id="bass" band=1
+    signal "audio-band" id="low-mid" band=2
+    signal "audio-band" id="presence" band=4
+    signal "audio-band" id="air" band=7
+    signal "audio-onset" id="hit"
+    signal "lfo" id="orbit-x" cycles=1 seconds=7 waveform="sine" phase=0.0
+    signal "lfo" id="orbit-y" cycles=1 seconds=7 waveform="sine" phase=0.25
+    signal "lfo" id="breath" cycles=1 seconds=4 waveform="triangle" phase=0.0
+
+    route id="sub-cyan-width" from="sub" to="cyan-blade" parameter="transform/scale-y" mode="replace" scale=0.035 offset=0.012
+    route id="bass-magenta-width" from="bass" to="magenta-blade" parameter="transform/scale-x" mode="replace" scale=0.035 offset=0.012
+    route id="low-mid-cyan-turn" from="low-mid" to="cyan-blade" parameter="transform/rotation" mode="replace" scale=76.0 offset=-38.0
+    route id="presence-magenta-turn" from="presence" to="magenta-blade" parameter="transform/rotation" mode="replace" scale=-92.0 offset=46.0
+    route id="presence-warp-x" from="presence" to="spectral-warp" parameter="displacement/amount-x" mode="replace" scale=48.0 offset=12.0
+    route id="air-warp-y" from="air" to="spectral-warp" parameter="displacement/amount-y" mode="replace" scale=44.0 offset=10.0
+    route id="sub-crisp-energy" from="sub" to="crisp-energy" parameter="modulate/amount" mode="replace" scale=0.12 offset=0.16
+    route id="bass-bloom" from="bass" to="arena-glow" parameter="bloom/intensity" mode="replace" scale=0.16 offset=0.18
+    route id="onset-bloom" from="hit" to="arena-glow" parameter="bloom/intensity" mode="add" scale=0.16 offset=0.0
+    route id="orbit-field-x" from="orbit-x" to="x-motion" parameter="transform/translation-x" mode="replace" scale=62.0 offset=0.0
+    route id="orbit-field-y" from="orbit-y" to="y-motion" parameter="transform/translation-y" mode="replace" scale=48.0 offset=0.0
+    route id="breath-prism-x" from="breath" to="counter-prism" parameter="transform/scale-x" mode="replace" scale=0.1 offset=0.56
+    route id="breath-prism-y" from="breath" to="counter-prism" parameter="transform/scale-y" mode="replace" scale=0.1 offset=0.56
+    route id="presence-cyan-orbit-x" from="presence" to="cyan-orbit" parameter="transform/translation-x" mode="replace" scale=72.0 offset=24.0
+    route id="low-mid-cyan-orbit-y" from="low-mid" to="cyan-orbit" parameter="transform/translation-y" mode="replace" scale=46.0 offset=-23.0
+    route id="air-gold-orbit-x" from="air" to="gold-orbit" parameter="transform/translation-x" mode="replace" scale=-72.0 offset=-24.0
+    route id="bass-gold-orbit-y" from="bass" to="gold-orbit" parameter="transform/translation-y" mode="replace" scale=-46.0 offset=23.0
+    route id="bass-cyan-orbit-scale" from="bass" to="cyan-orbit" parameter="transform/scale-x" mode="replace" scale=0.2 offset=0.24
+    route id="sub-gold-orbit-scale" from="sub" to="gold-orbit" parameter="transform/scale-y" mode="replace" scale=0.18 offset=0.22
+    route id="air-orbital-bloom" from="air" to="orbital-glow" parameter="bloom/intensity" mode="replace" scale=0.34 offset=0.28
+
+    connect id="cyan-shape" from="cyan-source.image" to="cyan-blade.image"
+    connect id="magenta-shape" from="magenta-source.image" to="magenta-blade.image"
+    connect id="cross-base" from="cyan-blade.image" to="spectral-cross.background"
+    connect id="cross-layer" from="magenta-blade.image" to="spectral-cross.foreground"
+    connect id="animate-x" from="x-field.image" to="x-motion.image"
+    connect id="animate-y" from="y-field.image" to="y-motion.image"
+    connect id="warp-image" from="spectral-cross.image" to="spectral-warp.image"
+    connect id="warp-x" from="x-motion.image" to="spectral-warp.x-map"
+    connect id="warp-y" from="y-motion.image" to="spectral-warp.y-map"
+    connect id="reflect-core" from="spectral-warp.image" to="symmetric-energy.image"
+    connect id="turn-prism" from="symmetric-energy.image" to="counter-prism.image"
+    connect id="core-base" from="spectral-warp.image" to="megaflux-core.background"
+    connect id="core-prism" from="counter-prism.image" to="megaflux-core.foreground"
+    connect id="glow-source" from="megaflux-core.image" to="arena-glow.image"
+    connect id="detail-source" from="megaflux-core.image" to="crisp-energy.image"
+    connect id="glow-layer" from="arena-glow.image" to="lit-core.background"
+    connect id="detail-layer" from="crisp-energy.image" to="lit-core.foreground"
+    connect id="cyan-ring-image" from="cyan-ring-light.image" to="cyan-ring.image"
+    connect id="cyan-ring-matte" from="ring-matte.image" to="cyan-ring.mask"
+    connect id="gold-ring-image" from="gold-ring-light.image" to="gold-ring.image"
+    connect id="gold-ring-matte" from="ring-matte.image" to="gold-ring.mask"
+    connect id="cyan-ring-motion" from="cyan-ring.image" to="cyan-orbit.image"
+    connect id="gold-ring-motion" from="gold-ring.image" to="gold-orbit.image"
+    connect id="orbit-base" from="cyan-orbit.image" to="orbital-pair.background"
+    connect id="orbit-layer" from="gold-orbit.image" to="orbital-pair.foreground"
+    connect id="reflect-orbits" from="orbital-pair.image" to="orbital-reflection.image"
+    connect id="orbit-field-base" from="orbital-pair.image" to="orbital-field.background"
+    connect id="orbit-field-layer" from="orbital-reflection.image" to="orbital-field.foreground"
+    connect id="orbit-bloom" from="orbital-field.image" to="orbital-glow.image"
+    connect id="engine-core" from="lit-core.image" to="festival-engine.background"
+    connect id="engine-orbits" from="orbital-glow.image" to="festival-engine.foreground"
+    connect id="stage" from="midnight.image" to="program-image.background"
+    connect id="energy" from="festival-engine.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

@@ -1,0 +1,121 @@
+// Audio, deterministic motion, and one-frame memory accumulate a self-similar festival supernova.
+patch id="example-audio-feedback-supernova" {
+    output width=320 height=180 rate-hz=30
+
+    node "gradient" id="void" label="Near-black ultraviolet stage" {
+        axis "radial"
+        sample-a coverage-r=0.006 coverage-g=0.001 coverage-b=0.018 coverage-a=1.0 emission-r=0.008 emission-g=0.0 emission-b=0.035
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.002 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="hollow-matte" label="Hollow energy seed matte" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="cyan-light" label="Electric cyan seed" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.05 emission-g=1.4 emission-b=3.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="magenta-light" label="Hot magenta seed" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=2.8 emission-g=0.02 emission-b=0.72
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="cyan-ring" label="Hollow cyan seed"
+    node "mask" id="magenta-ring" label="Hollow magenta seed"
+    node "transform" id="cyan-orbit" label="Bass-sized cyan satellite" {
+        translation-x 32.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.24 unit="ratio"
+        scale-y 0.035 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 11.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "transform" id="magenta-orbit" label="Sub-sized magenta satellite" {
+        translation-x -32.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.035 unit="ratio"
+        scale-y 0.24 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame -13.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "composite" id="fresh-pair" label="Fresh opposed energy satellites"
+    node "mirror" id="fresh-constellation" label="Fourfold fresh energy constellation" { axis "top-bottom" }
+    node "composite" id="fresh-energy" label="Complete fresh constellation"
+    node "modulate" id="hit-energy" label="Onset-punched fresh energy" { amount 0.74 unit="ratio" }
+
+    node "transform" id="memory-vortex" label="Audio-steered recursive memory vortex" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.985 unit="ratio"
+        scale-y 0.985 unit="ratio"
+        rotation 9.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "modulate" id="memory-decay" label="Long phosphor memory" { amount 0.96 unit="ratio" }
+    node "composite" id="supernova-memory" label="Recursive audio supernova"
+    node "bloom" id="supernova-bloom" label="Air-band arena atmosphere" {
+        radius 9 unit="px"
+        intensity 0.42 unit="ratio"
+    }
+    node "composite" id="lit-supernova" label="Crisp memory over atmospheric bloom"
+    node "composite" id="program-image" label="Finished feedback supernova"
+
+    signal "audio-band" id="sub" band=0
+    signal "audio-band" id="bass" band=1
+    signal "audio-band" id="mid" band=3
+    signal "audio-band" id="presence" band=5
+    signal "audio-band" id="air" band=7
+    signal "audio-onset" id="hit"
+    signal "lfo" id="orbit" cycles=1 seconds=6 waveform="sine" phase=0.0
+    signal "lfo" id="counter-orbit" cycles=1 seconds=6 waveform="sine" phase=0.5
+
+    route id="sub-magenta-width" from="sub" to="magenta-orbit" parameter="transform/scale-x" mode="replace" scale=0.025 offset=0.025
+    route id="bass-cyan-height" from="bass" to="cyan-orbit" parameter="transform/scale-y" mode="replace" scale=0.025 offset=0.025
+    route id="mid-memory-turn" from="mid" to="memory-vortex" parameter="transform/rotation" mode="replace" scale=10.0 offset=4.0
+    route id="bass-memory-scale-x" from="bass" to="memory-vortex" parameter="transform/scale-x" mode="replace" scale=0.012 offset=0.978
+    route id="bass-memory-scale-y" from="bass" to="memory-vortex" parameter="transform/scale-y" mode="replace" scale=0.012 offset=0.978
+    route id="presence-cyan-x" from="presence" to="cyan-orbit" parameter="transform/translation-x" mode="replace" scale=12.0 offset=26.0
+    route id="presence-magenta-x" from="presence" to="magenta-orbit" parameter="transform/translation-x" mode="replace" scale=-12.0 offset=-26.0
+    route id="orbit-cyan-y" from="orbit" to="cyan-orbit" parameter="transform/translation-y" mode="replace" scale=12.0 offset=18.0
+    route id="orbit-magenta-y" from="counter-orbit" to="magenta-orbit" parameter="transform/translation-y" mode="replace" scale=12.0 offset=-18.0
+    route id="sub-memory" from="sub" to="memory-decay" parameter="modulate/amount" mode="replace" scale=0.025 offset=0.95
+    route id="onset-injection" from="hit" to="hit-energy" parameter="modulate/amount" mode="add" scale=0.24 offset=0.0
+    route id="air-bloom" from="air" to="supernova-bloom" parameter="bloom/intensity" mode="replace" scale=0.42 offset=0.24
+
+    connect id="cyan-source" from="cyan-light.image" to="cyan-ring.image"
+    connect id="cyan-matte" from="hollow-matte.image" to="cyan-ring.mask"
+    connect id="magenta-source" from="magenta-light.image" to="magenta-ring.image"
+    connect id="magenta-matte" from="hollow-matte.image" to="magenta-ring.mask"
+    connect id="cyan-motion" from="cyan-ring.image" to="cyan-orbit.image"
+    connect id="magenta-motion" from="magenta-ring.image" to="magenta-orbit.image"
+    connect id="pair-base" from="cyan-orbit.image" to="fresh-pair.background"
+    connect id="pair-layer" from="magenta-orbit.image" to="fresh-pair.foreground"
+    connect id="reflect-pair" from="fresh-pair.image" to="fresh-constellation.image"
+    connect id="fresh-base" from="fresh-pair.image" to="fresh-energy.background"
+    connect id="fresh-layer" from="fresh-constellation.image" to="fresh-energy.foreground"
+    connect id="fresh-hit" from="fresh-energy.image" to="hit-energy.image"
+    connect id="previous-memory" from="supernova-memory.image" to="memory-vortex.image" timing="previous-frame"
+    connect id="turn-memory" from="memory-vortex.image" to="memory-decay.image"
+    connect id="memory-base" from="memory-decay.image" to="supernova-memory.background"
+    connect id="inject-energy" from="hit-energy.image" to="supernova-memory.foreground"
+    connect id="bloom-memory" from="supernova-memory.image" to="supernova-bloom.image"
+    connect id="atmosphere" from="supernova-bloom.image" to="lit-supernova.background"
+    connect id="crisp-memory" from="supernova-memory.image" to="lit-supernova.foreground"
+    connect id="stage" from="void.image" to="program-image.background"
+    connect id="supernova" from="lit-supernova.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

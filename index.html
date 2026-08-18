@@ -113,6 +113,9 @@
       });
       player.poster = `posters/${slug}.png`;
       player.setAttribute("aria-label", `Video S/${slug.slice(0, 2)}: ${title}`);
+      player.loop = !capabilities.split(",").some((capability) =>
+        capability === "history" || capability === "feedback"
+      );
       player.src = `videos/${slug}.mp4`;
       document.querySelector("#player-status").textContent = `Loading video S/${slug.slice(0, 2)}…`;
       player.addEventListener("canplay", () => {
