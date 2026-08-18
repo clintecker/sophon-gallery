@@ -1,0 +1,127 @@
+// Counter-warped luminous tiles breathe into a seamless liquid-light cathedral.
+patch id="example-liquid-neon-cathedral" {
+    output width=240 height=240 rate-hz=30
+    node "gradient" id="midnight" label="Midnight radial chamber" {
+        axis "radial"
+        sample-a coverage-r=0.012 coverage-g=0.002 coverage-b=0.035 coverage-a=1.0 emission-r=0.025 emission-g=0.0 emission-b=0.075
+        sample-b coverage-r=0.001 coverage-g=0.0 coverage-b=0.004 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="cyan-plane" label="Transparent cyan light plane" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.01 emission-g=0.46 emission-b=1.0
+    }
+    node "gradient" id="magenta-plane" label="Transparent magenta light plane" {
+        axis "vertical"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.95 emission-g=0.01 emission-b=0.38
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "transform" id="cyan-ribbon" label="Narrow cyan nave" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.25 unit="ratio"
+        scale-y 0.075 unit="ratio"
+        rotation 24.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "transform" id="magenta-ribbon" label="Narrow magenta transept" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.075 unit="ratio"
+        scale-y 1.25 unit="ratio"
+        rotation -24.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "composite" id="light-cross" label="Crossed spectral architecture"
+    node "gradient" id="x-flow" label="Horizontal liquid control field" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.08 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.8 coverage-g=0.8 coverage-b=0.8 coverage-a=0.92 emission-r=4.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="y-flow" label="Vertical liquid control field" {
+        axis "vertical"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.12 emission-r=0.0 emission-g=4.0 emission-b=0.0
+        sample-b coverage-r=0.8 coverage-g=0.8 coverage-b=0.8 coverage-a=0.88 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "transform" id="x-orbit" label="Slow clockwise control orbit" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.45 unit="ratio"
+        scale-y 1.45 unit="ratio"
+        rotation 18.0 unit="degrees"
+        rotation-per-frame 12.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "transform" id="y-orbit" label="Slow counter-clockwise control orbit" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.35 unit="ratio"
+        scale-y 1.35 unit="ratio"
+        rotation -24.0 unit="degrees"
+        rotation-per-frame -12.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "displacement" id="liquid-warp" label="Primary liquid-light warp" {
+        amount-x 54.0 unit="px"
+        amount-y 46.0 unit="px"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "mirror" id="reflected-liquid" label="Opposed liquid reflection" { axis "left-right" }
+    node "transform" id="prism-turn" label="Counter-rotating prism layer" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 0.78 unit="ratio"
+        scale-y 0.78 unit="ratio"
+        rotation 45.0 unit="degrees"
+        rotation-per-frame -12.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "composite" id="liquid-vault" label="Interlocked liquid vault"
+    node "bloom" id="cathedral-glow" label="Large-format spectral glow" {
+        radius 12 unit="px"
+        intensity 0.68 unit="ratio"
+    }
+    node "modulate" id="crisp-vault" label="Controlled architectural detail" {
+        amount 0.48 unit="ratio"
+    }
+    node "composite" id="glowing-vault" label="Glow behind crisp liquid structure"
+    node "composite" id="program-image" label="Finished liquid neon cathedral"
+    connect id="shape-cyan-ribbon" from="cyan-plane.image" to="cyan-ribbon.image"
+    connect id="shape-magenta-ribbon" from="magenta-plane.image" to="magenta-ribbon.image"
+    connect id="cross-base" from="cyan-ribbon.image" to="light-cross.background"
+    connect id="cross-layer" from="magenta-ribbon.image" to="light-cross.foreground"
+    connect id="animate-x-map" from="x-flow.image" to="x-orbit.image"
+    connect id="animate-y-map" from="y-flow.image" to="y-orbit.image"
+    connect id="warp-image" from="light-cross.image" to="liquid-warp.image"
+    connect id="warp-horizontal" from="x-orbit.image" to="liquid-warp.x-map"
+    connect id="warp-vertical" from="y-orbit.image" to="liquid-warp.y-map"
+    connect id="reflect-liquid" from="liquid-warp.image" to="reflected-liquid.image"
+    connect id="turn-prism" from="reflected-liquid.image" to="prism-turn.image"
+    connect id="vault-base" from="liquid-warp.image" to="liquid-vault.background"
+    connect id="vault-prism" from="prism-turn.image" to="liquid-vault.foreground"
+    connect id="glow-source" from="liquid-vault.image" to="cathedral-glow.image"
+    connect id="detail-source" from="liquid-vault.image" to="crisp-vault.image"
+    connect id="glow-layer" from="cathedral-glow.image" to="glowing-vault.background"
+    connect id="detail-layer" from="crisp-vault.image" to="glowing-vault.foreground"
+    connect id="background" from="midnight.image" to="program-image.background"
+    connect id="cathedral" from="glowing-vault.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}
