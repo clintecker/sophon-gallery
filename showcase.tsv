@@ -29,3 +29,5 @@ slug	title	capabilities	highlight
 27-lfo-spectral-beacon	LFO Spectral Beacon	lfo,signals,transform	Four phase-shifted signals make one spectral light body orbit breathe rotate and pulse.
 28-adsr-prism-strobe	ADSR Prism Strobe	envelope,gate,signals	A presentation-committed beat punches a rotating GPU prism grid with deterministic attack decay sustain and release.
 29-audio-reactive-laser-iris	Audio-Reactive Laser Iris	audio,bands,onset,gpu	Live bass reshapes a mirrored laser iris while mids rotate treble throws and detected onsets flash it.
+30-audio-spectral-megaflux	Audio Spectral Megaflux	audio,displacement,bloom,transform	Five spectral bands and detected onsets conduct a widescreen liquid-light engine built for a festival stage.
+31-audio-feedback-supernova	Audio Feedback Supernova	audio,feedback,bloom,transform	Five spectral bands and onsets steer recursive phosphor memory into an expanding cyan-magenta supernova.
