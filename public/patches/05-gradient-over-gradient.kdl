@@ -1,0 +1,20 @@
+// A composite places its foreground over its background.
+patch id="example-gradient-over-gradient" {
+    output width=16 height=9 rate-hz=60
+
+    node "gradient" id="background" label="Ocean background" {
+        axis "vertical"
+        sample-a coverage-r=0.01 coverage-g=0.04 coverage-b=0.15 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.10 coverage-g=0.55 coverage-b=0.75 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="foreground" label="Orange foreground" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.95 coverage-g=0.25 coverage-b=0.05 coverage-a=0.75 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="mix" label="Gradient blend"
+
+    connect id="background" from="background.image" to="mix.background"
+    connect id="foreground" from="foreground.image" to="mix.foreground"
+    sink id="program" input="mix.image"
+}

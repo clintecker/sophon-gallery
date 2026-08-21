@@ -1,0 +1,105 @@
+// Two keyed synthetic lights get crisp clip/gamma mattes, motion, symmetry, and bloom.
+patch id="example-crystalline-key-vortex" {
+    output width=180 height=90 rate-hz=30
+
+    node "noise" id="space" label="Animated midnight crystal field" {
+        seed 1907
+        sample-a coverage-r=0.001 coverage-g=0.003 coverage-b=0.016 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.012 coverage-g=0.004 coverage-b=0.04 coverage-a=1.0 emission-r=0.02 emission-g=0.03 emission-b=0.16
+    }
+
+    node "gradient" id="green-stage" label="Synthetic green stage" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.65 coverage-b=0.025 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.65 coverage-b=0.025 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="cyan-performer" label="Cyan energy filmed on green" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.85 coverage-b=1.0 coverage-a=1.0 emission-r=0.0 emission-g=1.5 emission-b=2.4
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="cyan-take" label="Cyan green-screen take"
+    node "chroma-key" id="remove-green" label="Remove green stage" {
+        key-red 0.0
+        key-green 0.65
+        key-blue 0.025
+        threshold 0.40 unit="ratio"
+        softness 0.22 unit="ratio"
+    }
+    node "matte-refine" id="cut-cyan" label="Cut a crisp cyan crystal edge" {
+        black-clip 0.12 unit="ratio"
+        white-clip 0.72 unit="ratio"
+        gamma 2.8
+    }
+    node "scroll" id="cyan-orbit" label="Orbit the cyan crystal" {
+        x-offset -51 unit="px"
+        y-offset 17 unit="px"
+        x-per-frame 6 unit="px"
+        y-per-frame 3 unit="px"
+    }
+
+    node "gradient" id="black-stage" label="Synthetic black stage" {
+        axis "vertical"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="gold-performer" label="Gold energy filmed on black" {
+        axis "radial"
+        sample-a coverage-r=1.0 coverage-g=0.28 coverage-b=0.0 coverage-a=1.0 emission-r=2.7 emission-g=0.55 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="gold-take" label="Gold black-stage take"
+    node "luma-key" id="remove-black" label="Remove black stage" {
+        mode "dark"
+        threshold 0.04 unit="ratio"
+        softness 0.28 unit="ratio"
+    }
+    node "matte-refine" id="cut-gold" label="Fill and sharpen the gold crystal" {
+        black-clip 0.08 unit="ratio"
+        white-clip 0.84 unit="ratio"
+        gamma 0.55
+    }
+    node "scroll" id="gold-orbit" label="Counter-orbit the gold crystal" {
+        x-offset 43 unit="px"
+        y-offset -23 unit="px"
+        x-per-frame -6 unit="px"
+        y-per-frame -3 unit="px"
+    }
+
+    node "composite" id="crossing-crystals" label="Crossing keyed crystal lights"
+    node "mirror" id="opposite-crystals" label="Opposing crystal reflections" {
+        axis "both"
+    }
+    node "composite" id="crystal-vortex" label="Fourfold keyed vortex"
+    node "blur" id="vortex-halo" label="Wide luminous halo" {
+        radius 6 unit="px"
+    }
+    node "modulate" id="vortex-core" label="Dimmed crisp crystal core" {
+        amount 0.72 unit="ratio"
+    }
+    node "composite" id="bloomed-vortex" label="Halo plus crisp crystal core"
+    node "composite" id="program-image" label="Crystalline key vortex in space"
+
+    connect id="cyan-stage" from="green-stage.image" to="cyan-take.background"
+    connect id="cyan-on-stage" from="cyan-performer.image" to="cyan-take.foreground"
+    connect id="cyan-key" from="cyan-take.image" to="remove-green.image"
+    connect id="cyan-cut" from="remove-green.image" to="cut-cyan.image"
+    connect id="cyan-motion" from="cut-cyan.image" to="cyan-orbit.image"
+    connect id="gold-stage" from="black-stage.image" to="gold-take.background"
+    connect id="gold-on-stage" from="gold-performer.image" to="gold-take.foreground"
+    connect id="gold-key" from="gold-take.image" to="remove-black.image"
+    connect id="gold-cut" from="remove-black.image" to="cut-gold.image"
+    connect id="gold-motion" from="cut-gold.image" to="gold-orbit.image"
+    connect id="cyan-layer" from="cyan-orbit.image" to="crossing-crystals.background"
+    connect id="gold-layer" from="gold-orbit.image" to="crossing-crystals.foreground"
+    connect id="reflect" from="crossing-crystals.image" to="opposite-crystals.image"
+    connect id="vortex-original" from="crossing-crystals.image" to="crystal-vortex.background"
+    connect id="vortex-reflection" from="opposite-crystals.image" to="crystal-vortex.foreground"
+    connect id="halo" from="crystal-vortex.image" to="vortex-halo.image"
+    connect id="core" from="crystal-vortex.image" to="vortex-core.image"
+    connect id="halo-layer" from="vortex-halo.image" to="bloomed-vortex.background"
+    connect id="core-layer" from="vortex-core.image" to="bloomed-vortex.foreground"
+    connect id="space-layer" from="space.image" to="program-image.background"
+    connect id="vortex-layer" from="bloomed-vortex.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}
