@@ -32,3 +32,5 @@ slug	title	capabilities	highlight
 30-audio-spectral-megaflux	Audio Spectral Megaflux	audio,displacement,bloom,transform	Five spectral bands and detected onsets conduct a widescreen liquid-light engine built for a festival stage.
 31-audio-feedback-supernova	Audio Feedback Supernova	audio,feedback,bloom,transform	Five spectral bands and onsets steer recursive phosphor memory into an expanding cyan-magenta supernova.
 68-temporal-motion-aurora	Temporal Motion Aurora	motion-difference,history,transform,gpu	Current light and retained history interfere as cyan-magenta motion contours that reveal only what changed.
+70-audio-scene-color-chrysalis	Audio Scene Color Chrysalis	audio,color-routing,history,bloom	Live audio mixes complete scene-linear color and emission while a hysteretic replacement opens a luminous chrysalis without chatter.
+71-philox-nebula-memory	Philox Nebula Memory	noise,history,kaleidoscope,bloom,gpu	Deterministic GPU stardust folds through twelve mirrored sectors and accumulates into replay-stable luminous memory.
