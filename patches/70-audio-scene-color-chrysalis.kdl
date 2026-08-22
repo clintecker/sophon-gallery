@@ -1,0 +1,111 @@
+// Four audio bands directly mix complete ADR-009 colors while geometry keeps moving on the GPU.
+patch id="example-audio-scene-color-chrysalis" {
+    output width=800 height=450 rate-hz=30
+
+    node "gradient" id="stage" label="Audio-painted midnight chamber" {
+        axis "radial"
+        sample-a coverage-r=0.018 coverage-g=0.004 coverage-b=0.055 coverage-a=1.0 emission-r=0.015 emission-g=0.0 emission-b=0.08
+        sample-b coverage-r=0.001 coverage-g=0.003 coverage-b=0.012 coverage-a=1.0 emission-r=0.0 emission-g=0.002 emission-b=0.018
+    }
+    node "circle" id="iris" label="Scene-color pressure iris" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        inner-radius 0.21875 unit="ratio"
+        outer-radius 0.265625 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.82 coverage-g=0.06 coverage-b=0.42 coverage-a=0.92 emission-r=2.2 emission-g=0.04 emission-b=1.1
+    }
+    node "segment" id="wing" label="Scene-color diffraction wing" {
+        start-x 0.5 unit="ratio"
+        start-y 0.5 unit="ratio"
+        // Binary-exact ratios preserve CPU/GPU geometry agreement.
+        end-x 0.9375 unit="ratio"
+        end-y 0.4375 unit="ratio"
+        radius 0.015625 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.04 coverage-g=0.72 coverage-b=0.88 coverage-a=0.94 emission-r=0.04 emission-g=1.8 emission-b=2.8
+    }
+    node "transform" id="iris-motion" label="Bass breathing iris" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.0 unit="ratio"
+        scale-y 1.0 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.09 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "mirror" id="iris-reflection" label="Fourfold luminous iris" { axis "both" }
+    node "transform" id="wing-motion" label="Reversible wing flight" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.0 unit="ratio"
+        scale-y 1.0 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame -0.13 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "hue-rotate" id="wing-spectrum" label="High-mid spectral steering" { angle 0.0 unit="degrees" }
+    node "kaleidoscope" id="diffraction" label="Thirty-two-fold color diffraction" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        segments 32
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "composite" id="iris-over-stage" label="Painted iris over chamber"
+    node "composite" id="chrysalis" label="Diffracted wings over iris"
+    node "bloom" id="atmosphere" label="Audio-colored festival atmosphere" {
+        radius 20 unit="px"
+        intensity 0.42 unit="ratio"
+    }
+
+    signal "audio-band" id="low" band="low" response="decibel"
+    signal "audio-band" id="low-mid" band="low-mid" response="decibel"
+    signal "audio-band" id="high-mid" band="high-mid" response="decibel"
+    signal "audio-band" id="high" band="high" response="decibel"
+    signal "audio-onset" id="hit"
+    signal "lfo" id="bass-direction" cycles=1 seconds=9 waveform="sine" phase=0.0
+    signal "lfo" id="mid-direction" cycles=1 seconds=7 waveform="triangle" phase=0.25
+    signal "math" id="bass-gesture" operation="multiply" left="low" right="bass-direction"
+    signal "math" id="mid-gesture" operation="multiply" left="low-mid" right="mid-direction"
+
+    route id="bass-breathe-x" from="bass-gesture" to="iris-motion" parameter="transform/scale-x" mode="replace" scale=0.34 offset=1.0 attack-ms=25 release-ms=240
+    route id="bass-breathe-y" from="bass-gesture" to="iris-motion" parameter="transform/scale-y" mode="replace" scale=0.34 offset=1.0 attack-ms=25 release-ms=240
+    route id="mid-wing-swing" from="mid-gesture" to="wing-motion" parameter="transform/rotation" mode="replace" scale=96.0 offset=0.0 attack-ms=35 release-ms=260
+    route id="mid-wing-flight" from="mid-gesture" to="wing-motion" parameter="transform/translation-y" mode="replace" scale=120.0 offset=0.0 attack-ms=35 release-ms=260
+    route id="mid-wing-spectrum" from="high-mid" to="wing-spectrum" parameter="hue-rotate/angle" mode="replace" scale=220.0 offset=-110.0 attack-ms=25 release-ms=220
+    route id="air-fold" from="high" to="diffraction" parameter="kaleidoscope/angle" mode="replace" scale=96.0 offset=-48.0 attack-ms=20 release-ms=180
+    route id="air-bloom" from="high" to="atmosphere" parameter="bloom/intensity" mode="replace" scale=0.46 offset=0.38 attack-ms=15 release-ms=380
+
+    color-route id="low-stage-color" from="low" to="stage" parameter="gradient/sample-a" mode="mix" interpolation="scene-linear" attack-ms=30 release-ms=320 {
+        target coverage-r=0.02 coverage-g=0.04 coverage-b=0.055 coverage-a=1.0 emission-r=0.0 emission-g=0.08 emission-b=0.0
+    }
+    color-route id="mid-iris-color" from="high-mid" to="iris" parameter="circle/sample" mode="mix" interpolation="scene-linear" attack-ms=25 release-ms=220 {
+        target coverage-r=0.02 coverage-g=0.72 coverage-b=0.72 coverage-a=0.72 emission-r=0.0 emission-g=2.0 emission-b=1.8
+    }
+    color-route id="air-wing-color" from="high" to="wing" parameter="segment/sample" mode="mix" interpolation="scene-linear" attack-ms=15 release-ms=180 {
+        target coverage-r=0.80 coverage-g=0.08 coverage-b=0.72 coverage-a=0.88 emission-r=2.7 emission-g=0.02 emission-b=2.4
+    }
+    color-route id="onset-white-iris" from="hit" to="iris" parameter="circle/sample" mode="replace" interpolation="scene-linear" activate-at=0.75 release-at=0.25 {
+        target coverage-r=0.82 coverage-g=0.82 coverage-b=0.82 coverage-a=0.92 emission-r=2.2 emission-g=2.2 emission-b=2.2
+    }
+
+    connect id="iris-flight" from="iris.image" to="iris-motion.image"
+    connect id="iris-mirror" from="iris-motion.image" to="iris-reflection.image"
+    connect id="wing-flight" from="wing.image" to="wing-motion.image"
+    connect id="wing-color" from="wing-motion.image" to="wing-spectrum.image"
+    connect id="wing-fold" from="wing-spectrum.image" to="diffraction.image"
+    connect id="stage-iris" from="stage.image" to="iris-over-stage.background"
+    connect id="iris-layer" from="iris-reflection.image" to="iris-over-stage.foreground"
+    connect id="iris-chrysalis" from="iris-over-stage.image" to="chrysalis.background"
+    connect id="wing-layer" from="diffraction.image" to="chrysalis.foreground"
+    connect id="chrysalis-atmosphere" from="chrysalis.image" to="atmosphere.image"
+    sink id="program" input="atmosphere.image"
+}
