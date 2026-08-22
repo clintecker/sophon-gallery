@@ -1,0 +1,59 @@
+// Near-black Rec.2020 light is transformed to a declared full-range Rec.709 sRGB signal.
+patch id="example-srgb-shadow-prism" {
+    output width=1280 height=720 rate-hz=30
+
+    node "gradient" id="velvet" label="Subtle scene-linear violet chamber" {
+        axis "radial"
+        sample-a coverage-r=0.018 coverage-g=0.003 coverage-b=0.045 coverage-a=1.0 emission-r=0.004 emission-g=0.0 emission-b=0.012
+        sample-b coverage-r=0.0005 coverage-g=0.001 coverage-b=0.004 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "segment" id="ray" label="Low-energy spectral ray" {
+        start-x 0.5 unit="ratio"
+        start-y 0.5 unit="ratio"
+        end-x 0.9375 unit="ratio"
+        end-y 0.46875 unit="ratio"
+        radius 0.0078125 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.015 coverage-g=0.12 coverage-b=0.18 coverage-a=0.88 emission-r=0.01 emission-g=0.36 emission-b=0.62
+    }
+    node "transform" id="ray-turn" label="Slow shadow-detail rotation" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.0 unit="ratio"
+        scale-y 1.0 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.08 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "transparent"
+    }
+    node "kaleidoscope" id="prism" label="Twenty-four-fold dark prism" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        segments 24
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "bloom" id="glow" label="Controlled spectral atmosphere" {
+        radius 12 unit="px"
+        intensity 0.28 unit="ratio"
+    }
+    node "composite" id="luminous-prism" label="Crisp rays over their atmosphere"
+    node "composite" id="program-image" label="Encoded shadow prism"
+
+    signal "lfo" id="fold-drift" cycles=1 seconds=14 waveform="sine" phase=0.0
+    signal "lfo" id="glow-breath" cycles=1 seconds=8 waveform="triangle" phase=0.25
+    route id="drift-fold" from="fold-drift" to="prism" parameter="kaleidoscope/angle" mode="replace" scale=20.0 offset=-10.0
+    route id="breathe-glow" from="glow-breath" to="glow" parameter="bloom/intensity" mode="replace" scale=0.18 offset=0.18
+
+    connect id="turn-ray" from="ray.image" to="ray-turn.image"
+    connect id="fold-ray" from="ray-turn.image" to="prism.image"
+    connect id="spread-light" from="prism.image" to="glow.image"
+    connect id="glow-base" from="glow.image" to="luminous-prism.background"
+    connect id="crisp-rays" from="prism.image" to="luminous-prism.foreground"
+    connect id="velvet-base" from="velvet.image" to="program-image.background"
+    connect id="prism-layer" from="luminous-prism.image" to="program-image.foreground"
+    sink id="program" input="program-image.image" primaries="rec709" transfer="srgb" range="full" tone-map="clip-to-reference-white" reference-white-nits=100.0
+}
