@@ -1,0 +1,55 @@
+patch id="temporal-motion-aurora" {
+    output width=1280 height=720 rate-hz=30
+
+    node "gradient" id="night" label="Deep violet stage" {
+        axis "radial"
+        sample-a coverage-r=0.015 coverage-g=0.004 coverage-b=0.055 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.001 coverage-g=0.002 coverage-b=0.012 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "scene-checker" id="prism-grid" label="Moving spectral material" {
+        cell-size 46 unit="px"
+        sample-a coverage-r=0.02 coverage-g=0.20 coverage-b=0.34 coverage-a=1.0 emission-r=0.02 emission-g=0.42 emission-b=1.10
+        sample-b coverage-r=0.31 coverage-g=0.015 coverage-b=0.18 coverage-a=1.0 emission-r=1.05 emission-g=0.03 emission-b=0.46
+    }
+    node "modulate" id="reveal" label="Flash-free temporal reveal" {
+        amount 0.0 unit="ratio"
+    }
+    node "kaleidoscope" id="fold" label="Twelve-way temporal crystal" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        segments 12
+        angle 9.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "motion-difference" id="motion" label="Only newly moving light"
+    node "hue-rotate" id="spectral-shift" label="Electric cyan-magenta motion" {
+        angle 38.0 unit="degrees"
+    }
+    node "bloom" id="motion-halo" label="Temporal aurora atmosphere" {
+        radius 10 unit="px"
+        intensity 0.72 unit="ratio"
+    }
+    node "modulate" id="ghost" label="Dim body beneath motion" {
+        amount 0.13 unit="ratio"
+    }
+    node "composite" id="body-over-night"
+    node "composite" id="temporal-finale"
+    signal "lfo" id="crystal-turn" cycles=1 seconds=8 waveform="sine" phase=0.0
+    signal "lfo" id="slow-reveal" cycles=1 seconds=2 waveform="sine" phase=0.75
+    route id="turn-fold" from="crystal-turn" to="fold" parameter="kaleidoscope/angle" mode="replace" scale=54.0 offset=9.0
+    route id="reveal-grid" from="slow-reveal" to="reveal" parameter="modulate/amount" mode="replace" scale=0.5 offset=0.5
+
+    connect id="grid-reveal" from="prism-grid.image" to="reveal.image"
+    connect id="reveal-fold" from="reveal.image" to="fold.image"
+    connect id="fold-now" from="fold.image" to="motion.current"
+    connect id="fold-before" from="fold.image" to="motion.reference" timing="previous-frame"
+    connect id="motion-color" from="motion.image" to="spectral-shift.image"
+    connect id="color-halo" from="spectral-shift.image" to="motion-halo.image"
+    connect id="fold-ghost" from="fold.image" to="ghost.image"
+    connect id="night-body" from="night.image" to="body-over-night.background"
+    connect id="ghost-body" from="ghost.image" to="body-over-night.foreground"
+    connect id="body-finale" from="body-over-night.image" to="temporal-finale.background"
+    connect id="halo-finale" from="motion-halo.image" to="temporal-finale.foreground"
+    sink id="program" input="temporal-finale.image"
+}
