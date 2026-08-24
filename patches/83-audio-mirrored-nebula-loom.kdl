@@ -1,0 +1,108 @@
+// A seamless mirrored tile loom whose density, drift, liquid bend, spectrum, and glow answer music.
+patch id="example-audio-mirrored-nebula-loom" {
+    output width=1280 height=720 rate-hz=30
+
+    node "gradient" id="midnight" label="Midnight ultraviolet field" {
+        axis "radial"
+        sample-a coverage-r=0.055 coverage-g=0.004 coverage-b=0.16 coverage-a=1.0 emission-r=0.08 emission-g=0.0 emission-b=0.20
+        sample-b coverage-r=0.002 coverage-g=0.025 coverage-b=0.065 coverage-a=1.0 emission-r=0.0 emission-g=0.035 emission-b=0.075
+    }
+    node "circle" id="cyan-orbit" label="Cyan orbital filament" {
+        center-x 0.28 unit="ratio"
+        center-y 0.37 unit="ratio"
+        inner-radius 0.13 unit="ratio"
+        outer-radius 0.16 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.03 coverage-g=0.62 coverage-b=0.72 coverage-a=0.88 emission-r=0.12 emission-g=0.50 emission-b=0.64
+    }
+    node "circle" id="magenta-orbit" label="Magenta orbital filament" {
+        center-x 0.72 unit="ratio"
+        center-y 0.63 unit="ratio"
+        inner-radius 0.075 unit="ratio"
+        outer-radius 0.105 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.66 coverage-g=0.025 coverage-b=0.40 coverage-a=0.84 emission-r=0.52 emission-g=0.02 emission-b=0.32
+    }
+    node "segment" id="golden-thread" label="Diagonal golden signal thread" {
+        start-x 0.08 unit="ratio"
+        start-y 0.82 unit="ratio"
+        end-x 0.91 unit="ratio"
+        end-y 0.19 unit="ratio"
+        radius 0.012 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.76 coverage-g=0.30 coverage-b=0.025 coverage-a=0.78 emission-r=0.62 emission-g=0.20 emission-b=0.01
+    }
+    node "rectangle" id="violet-gem" label="Rounded violet seed crystal" {
+        center-x 0.52 unit="ratio"
+        center-y 0.48 unit="ratio"
+        width 0.18 unit="ratio"
+        height 0.08 unit="ratio"
+        corner-radius 0.72 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.30 coverage-g=0.06 coverage-b=0.58 coverage-a=0.80 emission-r=0.24 emission-g=0.04 emission-b=0.55
+    }
+    node "composite" id="seed-one" label="First luminous motif layer"
+    node "composite" id="seed-two" label="Second luminous motif layer"
+    node "composite" id="seed" label="Complete asymmetric woven cell"
+    node "composite" id="seed-gem" label="Gem-set asymmetric woven cell"
+    node "tile" id="loom" label="Seamless mirrored audio loom" {
+        offset-x 0.0 unit="px"
+        offset-y 0.0 unit="px"
+        repetitions-x 4.0 unit="ratio"
+        repetitions-y 3.0 unit="ratio"
+        sampling "linear"
+        mode "mirror"
+    }
+    node "swirl" id="liquid-lens" label="Reversible liquid cloth bend" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        radius 1.55 unit="ratio"
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "hue-rotate" id="spectrum" label="Slow spectral migration" { angle 0.0 unit="degrees" }
+    node "convolution" id="filigree" label="Crisp woven filament relief" {
+        kernel "sharpen"
+        amount 0.12 unit="ratio"
+    }
+    node "bloom" id="arena-air" label="Air-responsive arena atmosphere" {
+        radius 14 unit="px"
+        intensity 0.22 unit="ratio"
+    }
+
+    signal "audio-band" id="bass" band="low" response="decibel"
+    signal "audio-band" id="low-mid" band="low-mid" response="decibel"
+    signal "audio-band" id="high-mid" band="high-mid" response="decibel"
+    signal "audio-band" id="air" band="high" response="decibel"
+    signal "lfo" id="horizontal-tide" cycles=1 seconds=13 waveform="sine" phase=0.0
+    signal "lfo" id="vertical-tide" cycles=1 seconds=17 waveform="triangle" phase=0.31
+    signal "lfo" id="turn-direction" cycles=1 seconds=9 waveform="sine" phase=0.66
+    signal "lfo" id="color-current" cycles=1 seconds=21 waveform="sine" phase=0.18
+    signal "math" id="reversible-bend" operation="multiply" left="high-mid" right="turn-direction"
+
+    route id="bass-horizontal-density" from="bass" to="loom" parameter="tile/repetitions-x" mode="replace" curve="ease-out-quint" scale=5.0 offset=2.0 attack-ms=8 release-ms=320
+    route id="mid-vertical-density" from="low-mid" to="loom" parameter="tile/repetitions-y" mode="replace" curve="ease-in-out-sine" scale=4.0 offset=2.0 attack-ms=12 release-ms=360
+    route id="horizontal-cell-drift" from="horizontal-tide" to="loom" parameter="tile/offset-x" mode="replace" scale=260.0 offset=0.0 attack-ms=80 release-ms=500
+    route id="vertical-cell-drift" from="vertical-tide" to="loom" parameter="tile/offset-y" mode="replace" scale=170.0 offset=0.0 attack-ms=80 release-ms=500
+    route id="high-mid-liquid-reversal" from="reversible-bend" to="liquid-lens" parameter="swirl/angle" mode="replace" scale=760.0 offset=0.0 attack-ms=8 release-ms=280
+    route id="bass-lens-compression" from="bass" to="liquid-lens" parameter="swirl/radius" mode="replace" curve="ease-out-quint" scale=-0.85 offset=1.85 attack-ms=10 release-ms=340
+    route id="slow-spectrum" from="color-current" to="spectrum" parameter="hue-rotate/angle" mode="replace" scale=52.0 offset=0.0 attack-ms=90 release-ms=520
+    route id="air-bloom-radius" from="air" to="arena-air" parameter="bloom/radius" mode="replace" curve="ease-out-expo" scale=44.0 offset=4.0 attack-ms=6 release-ms=300
+    route id="air-bloom-intensity" from="air" to="arena-air" parameter="bloom/intensity" mode="replace" curve="ease-out-quint" scale=0.62 offset=0.14 attack-ms=6 release-ms=360
+
+    connect id="midnight-seed-one" from="midnight.image" to="seed-one.background"
+    connect id="cyan-seed-one" from="cyan-orbit.image" to="seed-one.foreground"
+    connect id="seed-one-seed-two" from="seed-one.image" to="seed-two.background"
+    connect id="magenta-seed-two" from="magenta-orbit.image" to="seed-two.foreground"
+    connect id="seed-two-seed" from="seed-two.image" to="seed.background"
+    connect id="gold-seed" from="golden-thread.image" to="seed.foreground"
+    connect id="seed-gem-base" from="seed.image" to="seed-gem.background"
+    connect id="violet-seed-gem" from="violet-gem.image" to="seed-gem.foreground"
+    connect id="seed-loom" from="seed-gem.image" to="loom.image"
+    connect id="loom-spectrum" from="loom.image" to="spectrum.image"
+    connect id="spectrum-filigree" from="spectrum.image" to="filigree.image"
+    connect id="filigree-liquid" from="filigree.image" to="liquid-lens.image"
+    connect id="liquid-air" from="liquid-lens.image" to="arena-air.image"
+    sink id="program" input="arena-air.image"
+}
