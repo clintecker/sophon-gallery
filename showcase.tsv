@@ -35,3 +35,4 @@ slug	title	capabilities	highlight
 70-audio-scene-color-chrysalis	Audio Scene Color Chrysalis	audio,color-routing,history,bloom	Live audio mixes complete scene-linear color and emission while a hysteretic replacement opens a luminous chrysalis without chatter.
 71-philox-nebula-memory	Philox Nebula Memory	noise,history,kaleidoscope,bloom,gpu	Deterministic GPU stardust folds through twelve mirrored sectors and accumulates into replay-stable luminous memory.
 72-srgb-shadow-prism	sRGB Shadow Prism	output-transform,srgb,shadow-detail,kaleidoscope,gpu	A declared Rec.709 sRGB sink preserves near-black violet structure and spectral rays that linear eight-bit output used to erase.
+83-audio-mirrored-nebula-loom	Audio Mirrored Nebula Loom	audio,tile,mirror,swirl,convolution,bloom,gpu	A seamless mirrored cell loom continuously changes density and drift while high mids reverse its liquid bend and air opens a native GPU arena glow.
