@@ -1,0 +1,182 @@
+// Two independently tilted light planes turn analytic geometry into an audio-conducted neon hypercity.
+patch id="example-audio-keystone-hypercity" {
+    output width=1280 height=720 rate-hz=30
+
+    node "gradient" id="deep-space" label="Petrol-violet atmospheric depth" {
+        axis "radial"
+        sample-a coverage-r=0.003 coverage-g=0.055 coverage-b=0.075 coverage-a=1.0 emission-r=0.0 emission-g=0.075 emission-b=0.12
+        sample-b coverage-r=0.045 coverage-g=0.002 coverage-b=0.075 coverage-a=1.0 emission-r=0.075 emission-g=0.0 emission-b=0.13
+    }
+    node "circle" id="horizon" label="Massive amber event horizon" {
+        center-x 0.50 unit="ratio"
+        center-y 0.54 unit="ratio"
+        inner-radius 0.31 unit="ratio"
+        outer-radius 0.43 unit="ratio"
+        feather 7 unit="px"
+        sample coverage-r=0.72 coverage-g=0.20 coverage-b=0.012 coverage-a=0.74 emission-r=0.54 emission-g=0.09 emission-b=0.004
+    }
+    node "composite" id="atmosphere" label="Horizon suspended in deep space"
+
+    node "rectangle" id="vertical-rail" label="Cyan vertical architecture" {
+        center-x 0.50 unit="ratio"
+        center-y 0.50 unit="ratio"
+        width 0.018 unit="ratio"
+        height 0.92 unit="ratio"
+        corner-radius 0.18 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.01 coverage-g=0.72 coverage-b=0.82 coverage-a=0.78 emission-r=0.015 emission-g=0.44 emission-b=0.62
+    }
+    node "tile" id="vertical-city" label="Mirrored vertical city grid" {
+        offset-x 0.0 unit="px"
+        offset-y 0.0 unit="px"
+        repetitions-x 12.0 unit="ratio"
+        repetitions-y 1.0 unit="ratio"
+        sampling "linear"
+        mode "mirror"
+    }
+    node "rectangle" id="horizontal-rail" label="Magenta horizontal architecture" {
+        center-x 0.50 unit="ratio"
+        center-y 0.50 unit="ratio"
+        width 0.96 unit="ratio"
+        height 0.014 unit="ratio"
+        corner-radius 0.18 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.80 coverage-g=0.015 coverage-b=0.46 coverage-a=0.74 emission-r=0.58 emission-g=0.008 emission-b=0.34
+    }
+    node "tile" id="horizontal-city" label="Mirrored horizontal city grid" {
+        offset-x 0.0 unit="px"
+        offset-y 0.0 unit="px"
+        repetitions-x 1.0 unit="ratio"
+        repetitions-y 8.0 unit="ratio"
+        sampling "linear"
+        mode "mirror"
+    }
+    node "composite" id="city-grid" label="Crossed luminous architecture"
+    node "perspective" id="street-plane" label="Bass-folding street plane" {
+        center-x 0.50 unit="ratio"
+        center-y 0.52 unit="ratio"
+        horizontal 0.0 unit="ratio"
+        vertical 0.0 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+
+    node "segment" id="gold-beam" label="Asymmetric gold transit beam" {
+        start-x 0.04 unit="ratio"
+        start-y 0.82 unit="ratio"
+        end-x 0.94 unit="ratio"
+        end-y 0.26 unit="ratio"
+        radius 0.010 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.82 coverage-g=0.30 coverage-b=0.01 coverage-a=0.84 emission-r=0.72 emission-g=0.20 emission-b=0.002
+    }
+    node "tile" id="transit-array" label="Repeated orbital transit beams" {
+        offset-x 0.0 unit="px"
+        offset-y 0.0 unit="px"
+        repetitions-x 3.0 unit="ratio"
+        repetitions-y 4.0 unit="ratio"
+        sampling "linear"
+        mode "mirror"
+    }
+    node "modulate" id="transit-level" label="Controlled transit-beam energy" { amount 0.82 unit="ratio" }
+    node "perspective" id="sky-plane" label="Counter-tilted floating transit plane" {
+        center-x 0.50 unit="ratio"
+        center-y 0.48 unit="ratio"
+        horizontal 0.0 unit="ratio"
+        vertical 0.0 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+
+    node "composite" id="city-over-atmosphere" label="Street plane over event horizon"
+    node "composite" id="transit-over-city" label="Counter-tilted transit plane"
+    node "kaleidoscope" id="hypercity-prism" label="Sevenfold orbital skyline" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        segments 7
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "swirl" id="gravity-current" label="Reversible liquid gravity current" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        radius 1.8 unit="ratio"
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "hue-rotate" id="spectrum" label="Slow city spectrum migration" { angle 0.0 unit="degrees" }
+    node "contrast" id="architectural-depth" label="Bass architectural pressure" { amount 1.0 unit="ratio" }
+    node "bloom" id="arena-atmosphere" label="High-frequency arena atmosphere" {
+        radius 12 unit="px"
+        intensity 0.24 unit="ratio"
+    }
+    node "transform" id="floating-camera" label="Wide wandering hypercity camera" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.04 unit="ratio"
+        scale-y 1.04 unit="ratio"
+        shear-x 0.0 unit="ratio"
+        shear-y 0.0 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+
+    signal "audio-band" id="bass" band="low" response="decibel"
+    signal "audio-band" id="low-mid" band="low-mid" response="decibel"
+    signal "audio-band" id="high-mid" band="high-mid" response="decibel"
+    signal "audio-band" id="air" band="high" response="decibel"
+    signal "lfo" id="plane-x" cycles=1 seconds=13 waveform="sine" phase=0.0
+    signal "lfo" id="plane-y" cycles=1 seconds=17 waveform="triangle" phase=0.23
+    signal "lfo" id="tilt-direction" cycles=1 seconds=7 waveform="sine" phase=0.61
+    signal "lfo" id="counter-direction" cycles=1 seconds=11 waveform="sine" phase=0.37
+    signal "lfo" id="slow-color" cycles=1 seconds=23 waveform="sine" phase=0.13
+    signal "math" id="bass-tilt" operation="multiply" left="bass" right="tilt-direction"
+    signal "math" id="mid-tilt" operation="multiply" left="low-mid" right="counter-direction"
+
+    route id="wandering-street-x" from="plane-x" to="street-plane" parameter="perspective/center-x" mode="replace" scale=0.24 offset=0.5 attack-ms=70 release-ms=420
+    route id="wandering-street-y" from="plane-y" to="street-plane" parameter="perspective/center-y" mode="replace" scale=0.20 offset=0.5 attack-ms=70 release-ms=420
+    route id="bass-street-keystone" from="bass-tilt" to="street-plane" parameter="perspective/horizontal" mode="replace" scale=0.44 offset=0.0 attack-ms=5 release-ms=260
+    route id="mid-street-depth" from="mid-tilt" to="street-plane" parameter="perspective/vertical" mode="replace" scale=0.40 offset=0.0 attack-ms=8 release-ms=300
+    route id="counter-sky-keystone" from="mid-tilt" to="sky-plane" parameter="perspective/horizontal" mode="replace" scale=-0.42 offset=0.0 attack-ms=8 release-ms=300
+    route id="bass-sky-depth" from="bass-tilt" to="sky-plane" parameter="perspective/vertical" mode="replace" scale=-0.38 offset=0.0 attack-ms=5 release-ms=280
+    route id="bass-city-density" from="bass" to="vertical-city" parameter="tile/repetitions-x" mode="replace" curve="ease-out-quint" scale=10.0 offset=6.0 attack-ms=8 release-ms=320
+    route id="low-mid-city-density" from="low-mid" to="horizontal-city" parameter="tile/repetitions-y" mode="replace" scale=10.0 offset=5.0 attack-ms=10 release-ms=340
+    route id="high-mid-prism-turn" from="high-mid" to="hypercity-prism" parameter="kaleidoscope/angle" mode="replace" scale=240.0 offset=-120.0 attack-ms=10 release-ms=300
+    route id="bass-liquid-gravity" from="bass-tilt" to="gravity-current" parameter="swirl/angle" mode="replace" scale=1080.0 offset=0.0 attack-ms=6 release-ms=280
+    route id="slow-spectrum" from="slow-color" to="spectrum" parameter="hue-rotate/angle" mode="replace" scale=175.0 offset=0.0 attack-ms=90 release-ms=520
+    route id="bass-depth" from="bass" to="architectural-depth" parameter="contrast/amount" mode="replace" scale=1.2 offset=0.72 attack-ms=6 release-ms=300
+    route id="air-bloom-radius" from="air" to="arena-atmosphere" parameter="bloom/radius" mode="replace" curve="ease-out-expo" scale=54.0 offset=3.0 attack-ms=5 release-ms=320
+    route id="air-bloom-energy" from="air" to="arena-atmosphere" parameter="bloom/intensity" mode="replace" curve="ease-out-quint" scale=0.64 offset=0.16 attack-ms=5 release-ms=360
+    route id="camera-x" from="plane-x" to="floating-camera" parameter="transform/translation-x" mode="replace" scale=290.0 offset=0.0 attack-ms=80 release-ms=480
+    route id="camera-y" from="plane-y" to="floating-camera" parameter="transform/translation-y" mode="replace" scale=180.0 offset=0.0 attack-ms=80 release-ms=480
+    route id="high-mid-zoom-x" from="high-mid" to="floating-camera" parameter="transform/scale-x" mode="replace" curve="ease-out-expo" scale=0.85 offset=0.78 attack-ms=8 release-ms=300
+    route id="high-mid-zoom-y" from="high-mid" to="floating-camera" parameter="transform/scale-y" mode="replace" curve="ease-out-expo" scale=0.85 offset=0.78 attack-ms=8 release-ms=300
+
+    connect id="space-atmosphere" from="deep-space.image" to="atmosphere.background"
+    connect id="horizon-atmosphere" from="horizon.image" to="atmosphere.foreground"
+    connect id="vertical-city-tiles" from="vertical-rail.image" to="vertical-city.image"
+    connect id="horizontal-city-tiles" from="horizontal-rail.image" to="horizontal-city.image"
+    connect id="vertical-city-grid" from="vertical-city.image" to="city-grid.background"
+    connect id="horizontal-city-grid" from="horizontal-city.image" to="city-grid.foreground"
+    connect id="city-street-plane" from="city-grid.image" to="street-plane.image"
+    connect id="gold-transit-array" from="gold-beam.image" to="transit-array.image"
+    connect id="transit-level-input" from="transit-array.image" to="transit-level.image"
+    connect id="transit-sky-plane" from="transit-level.image" to="sky-plane.image"
+    connect id="atmosphere-city" from="atmosphere.image" to="city-over-atmosphere.background"
+    connect id="street-city" from="street-plane.image" to="city-over-atmosphere.foreground"
+    connect id="city-transit" from="city-over-atmosphere.image" to="transit-over-city.background"
+    connect id="sky-transit" from="sky-plane.image" to="transit-over-city.foreground"
+    connect id="transit-prism" from="transit-over-city.image" to="hypercity-prism.image"
+    connect id="prism-spectrum" from="hypercity-prism.image" to="spectrum.image"
+    connect id="spectrum-gravity" from="spectrum.image" to="gravity-current.image"
+    connect id="gravity-depth" from="gravity-current.image" to="architectural-depth.image"
+    connect id="depth-atmosphere" from="architectural-depth.image" to="arena-atmosphere.image"
+    connect id="atmosphere-camera" from="arena-atmosphere.image" to="floating-camera.image"
+    sink id="program" input="floating-camera.image"
+}
