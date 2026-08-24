@@ -1,0 +1,150 @@
+// A wandering reversible fisheye turns an asymmetric neon organism into an audio-conducted lens temple.
+patch id="example-audio-event-horizon-lens-temple" {
+    output width=1280 height=720 rate-hz=30
+
+    node "gradient" id="deep-field" label="Midnight teal-violet plasma" {
+        axis "radial"
+        sample-a coverage-r=0.006 coverage-g=0.055 coverage-b=0.09 coverage-a=1.0 emission-r=0.0 emission-g=0.07 emission-b=0.13
+        sample-b coverage-r=0.045 coverage-g=0.002 coverage-b=0.075 coverage-a=1.0 emission-r=0.09 emission-g=0.0 emission-b=0.14
+    }
+    node "circle" id="cyan-orbit" label="Cyan orbital membrane" {
+        center-x 0.31 unit="ratio"
+        center-y 0.39 unit="ratio"
+        inner-radius 0.075 unit="ratio"
+        outer-radius 0.15 unit="ratio"
+        feather 3 unit="px"
+        sample coverage-r=0.015 coverage-g=0.62 coverage-b=0.72 coverage-a=0.88 emission-r=0.02 emission-g=0.42 emission-b=0.62
+    }
+    node "circle" id="coral-orbit" label="Coral orbital membrane" {
+        center-x 0.69 unit="ratio"
+        center-y 0.62 unit="ratio"
+        inner-radius 0.04 unit="ratio"
+        outer-radius 0.125 unit="ratio"
+        feather 3 unit="px"
+        sample coverage-r=0.74 coverage-g=0.025 coverage-b=0.28 coverage-a=0.90 emission-r=0.62 emission-g=0.012 emission-b=0.22
+    }
+    node "segment" id="gold-vector" label="Gold diagonal vector" {
+        start-x 0.08 unit="ratio"
+        start-y 0.78 unit="ratio"
+        end-x 0.92 unit="ratio"
+        end-y 0.23 unit="ratio"
+        radius 0.009 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.82 coverage-g=0.32 coverage-b=0.012 coverage-a=0.82 emission-r=0.70 emission-g=0.22 emission-b=0.005
+    }
+    node "segment" id="lime-vector" label="Lime counter vector" {
+        start-x 0.18 unit="ratio"
+        start-y 0.18 unit="ratio"
+        end-x 0.82 unit="ratio"
+        end-y 0.82 unit="ratio"
+        radius 0.006 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.18 coverage-g=0.72 coverage-b=0.045 coverage-a=0.72 emission-r=0.12 emission-g=0.52 emission-b=0.018
+    }
+    node "composite" id="layer-one" label="First luminous orbit"
+    node "composite" id="layer-two" label="Counterweighted organism"
+    node "composite" id="layer-three" label="Gold structural vector"
+    node "composite" id="organism" label="Complete asymmetric seed"
+    node "tile" id="temple-cells" label="Mirrored lens-temple lattice" {
+        offset-x 0.0 unit="px"
+        offset-y 0.0 unit="px"
+        repetitions-x 4.0 unit="ratio"
+        repetitions-y 3.0 unit="ratio"
+        sampling "linear"
+        mode "mirror"
+    }
+    node "convolution" id="crystal-relief" label="Crystalline lattice relief" {
+        kernel "sharpen"
+        amount 0.16 unit="ratio"
+    }
+    node "fisheye" id="event-horizon" label="Wandering reversible event-horizon lens" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        radius 1.45 unit="ratio"
+        strength 0.0 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "swirl" id="liquid-space" label="Counter-rotating liquid space" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        radius 1.9 unit="ratio"
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "hue-rotate" id="spectrum" label="Slow spectral migration" { angle 0.0 unit="degrees" }
+    node "kaleidoscope" id="temple-prism" label="Ninefold event-horizon temple" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        segments 9
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "contrast" id="depth" label="Bass dimensional pressure" { amount 1.0 unit="ratio" }
+    node "bloom" id="arena-air" label="High-frequency arena atmosphere" {
+        radius 12 unit="px"
+        intensity 0.22 unit="ratio"
+    }
+    node "transform" id="camera-drift" label="Slow floating temple camera" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.08 unit="ratio"
+        scale-y 1.08 unit="ratio"
+        shear-x 0.0 unit="ratio"
+        shear-y 0.0 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+
+    signal "audio-band" id="bass" band="low" response="decibel"
+    signal "audio-band" id="low-mid" band="low-mid" response="decibel"
+    signal "audio-band" id="high-mid" band="high-mid" response="decibel"
+    signal "audio-band" id="air" band="high" response="decibel"
+    signal "lfo" id="lens-x" cycles=1 seconds=13 waveform="sine" phase=0.0
+    signal "lfo" id="lens-y" cycles=1 seconds=17 waveform="triangle" phase=0.23
+    signal "lfo" id="lens-direction" cycles=1 seconds=7 waveform="sine" phase=0.61
+    signal "lfo" id="space-direction" cycles=1 seconds=11 waveform="sine" phase=0.37
+    signal "lfo" id="slow-color" cycles=1 seconds=21 waveform="sine" phase=0.13
+    signal "math" id="bass-lens" operation="multiply" left="bass" right="lens-direction"
+    signal "math" id="mid-space" operation="multiply" left="low-mid" right="space-direction"
+
+    route id="wandering-lens-x" from="lens-x" to="event-horizon" parameter="fisheye/center-x" mode="replace" scale=0.28 offset=0.5 attack-ms=60 release-ms=420
+    route id="wandering-lens-y" from="lens-y" to="event-horizon" parameter="fisheye/center-y" mode="replace" scale=0.23 offset=0.5 attack-ms=60 release-ms=420
+    route id="bass-reversible-lens" from="bass-lens" to="event-horizon" parameter="fisheye/strength" mode="replace" scale=1.0 offset=0.0 attack-ms=5 release-ms=260
+    route id="high-mid-lens-radius" from="high-mid" to="event-horizon" parameter="fisheye/radius" mode="replace" curve="ease-in-out-sine" scale=-1.15 offset=1.65 attack-ms=8 release-ms=320
+    route id="low-mid-liquid-space" from="mid-space" to="liquid-space" parameter="swirl/angle" mode="replace" scale=980.0 offset=0.0 attack-ms=8 release-ms=300
+    route id="bass-horizontal-temple" from="bass" to="temple-cells" parameter="tile/repetitions-x" mode="replace" curve="ease-out-quint" scale=4.0 offset=2.0 attack-ms=8 release-ms=320
+    route id="low-mid-vertical-temple" from="low-mid" to="temple-cells" parameter="tile/repetitions-y" mode="replace" curve="ease-in-out-sine" scale=4.0 offset=2.0 attack-ms=12 release-ms=340
+    route id="high-mid-prism-turn" from="high-mid" to="temple-prism" parameter="kaleidoscope/angle" mode="replace" curve="ease-in-out-sine" scale=210.0 offset=-105.0 attack-ms=14 release-ms=320
+    route id="slow-spectrum" from="slow-color" to="spectrum" parameter="hue-rotate/angle" mode="replace" scale=175.0 offset=0.0 attack-ms=90 release-ms=520
+    route id="bass-depth" from="bass" to="depth" parameter="contrast/amount" mode="replace" curve="ease-out-quint" scale=1.15 offset=0.78 attack-ms=6 release-ms=300
+    route id="drifting-camera-x" from="lens-x" to="camera-drift" parameter="transform/translation-x" mode="replace" scale=250.0 offset=0.0 attack-ms=80 release-ms=480
+    route id="drifting-camera-y" from="lens-y" to="camera-drift" parameter="transform/translation-y" mode="replace" scale=150.0 offset=0.0 attack-ms=80 release-ms=480
+    route id="air-atmosphere-radius" from="air" to="arena-air" parameter="bloom/radius" mode="replace" curve="ease-out-expo" scale=42.0 offset=4.0 attack-ms=6 release-ms=300
+    route id="air-atmosphere-energy" from="air" to="arena-air" parameter="bloom/intensity" mode="replace" curve="ease-out-quint" scale=0.58 offset=0.16 attack-ms=6 release-ms=360
+
+    connect id="field-layer-one" from="deep-field.image" to="layer-one.background"
+    connect id="cyan-layer-one" from="cyan-orbit.image" to="layer-one.foreground"
+    connect id="layer-one-layer-two" from="layer-one.image" to="layer-two.background"
+    connect id="coral-layer-two" from="coral-orbit.image" to="layer-two.foreground"
+    connect id="layer-two-layer-three" from="layer-two.image" to="layer-three.background"
+    connect id="gold-layer-three" from="gold-vector.image" to="layer-three.foreground"
+    connect id="layer-three-organism" from="layer-three.image" to="organism.background"
+    connect id="lime-organism" from="lime-vector.image" to="organism.foreground"
+    connect id="organism-temple" from="organism.image" to="temple-cells.image"
+    connect id="temple-relief" from="temple-cells.image" to="crystal-relief.image"
+    connect id="relief-lens" from="crystal-relief.image" to="event-horizon.image"
+    connect id="lens-spectrum" from="event-horizon.image" to="spectrum.image"
+    connect id="spectrum-space" from="spectrum.image" to="liquid-space.image"
+    connect id="space-depth" from="liquid-space.image" to="depth.image"
+    connect id="depth-prism" from="depth.image" to="temple-prism.image"
+    connect id="prism-air" from="temple-prism.image" to="arena-air.image"
+    connect id="air-camera" from="arena-air.image" to="camera-drift.image"
+    sink id="program" input="camera-drift.image"
+}
