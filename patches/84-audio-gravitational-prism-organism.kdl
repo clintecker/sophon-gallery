@@ -1,0 +1,124 @@
+// A breathing mirrored organism whose moving gravity lens alternately pinches and blooms with music.
+patch id="example-audio-gravitational-prism-organism" {
+    output width=1280 height=720 rate-hz=30
+
+    node "gradient" id="void" label="Petrol ultraviolet deep field" {
+        axis "radial"
+        sample-a coverage-r=0.018 coverage-g=0.004 coverage-b=0.075 coverage-a=1.0 emission-r=0.035 emission-g=0.0 emission-b=0.14
+        sample-b coverage-r=0.001 coverage-g=0.045 coverage-b=0.052 coverage-a=1.0 emission-r=0.0 emission-g=0.085 emission-b=0.10
+    }
+    node "circle" id="aqua-cell" label="Aqua living membrane" {
+        center-x 0.31 unit="ratio"
+        center-y 0.39 unit="ratio"
+        inner-radius 0.09 unit="ratio"
+        outer-radius 0.165 unit="ratio"
+        feather 3 unit="px"
+        sample coverage-r=0.015 coverage-g=0.56 coverage-b=0.68 coverage-a=0.88 emission-r=0.05 emission-g=0.42 emission-b=0.60
+    }
+    node "circle" id="rose-cell" label="Rose plasma nucleus" {
+        center-x 0.68 unit="ratio"
+        center-y 0.61 unit="ratio"
+        inner-radius 0.035 unit="ratio"
+        outer-radius 0.12 unit="ratio"
+        feather 3 unit="px"
+        sample coverage-r=0.66 coverage-g=0.018 coverage-b=0.34 coverage-a=0.86 emission-r=0.56 emission-g=0.01 emission-b=0.30
+    }
+    node "segment" id="amber-spine" label="Amber organism spine" {
+        start-x 0.08 unit="ratio"
+        start-y 0.76 unit="ratio"
+        end-x 0.91 unit="ratio"
+        end-y 0.22 unit="ratio"
+        radius 0.010 unit="ratio"
+        feather 2 unit="px"
+        sample coverage-r=0.76 coverage-g=0.28 coverage-b=0.018 coverage-a=0.78 emission-r=0.64 emission-g=0.19 emission-b=0.005
+    }
+    node "rectangle" id="violet-heart" label="Rounded violet heart crystal" {
+        center-x 0.52 unit="ratio"
+        center-y 0.48 unit="ratio"
+        width 0.16 unit="ratio"
+        height 0.075 unit="ratio"
+        corner-radius 0.78 unit="ratio"
+        feather 3 unit="px"
+        sample coverage-r=0.28 coverage-g=0.03 coverage-b=0.62 coverage-a=0.84 emission-r=0.22 emission-g=0.015 emission-b=0.58
+    }
+    node "composite" id="organism-one" label="First living cell layer"
+    node "composite" id="organism-two" label="Second living cell layer"
+    node "composite" id="organism-three" label="Spined living cell"
+    node "composite" id="organism" label="Complete asymmetric organism"
+    node "tile" id="colony" label="Mirrored organism colony" {
+        offset-x 0.0 unit="px"
+        offset-y 0.0 unit="px"
+        repetitions-x 4.0 unit="ratio"
+        repetitions-y 3.0 unit="ratio"
+        sampling "linear"
+        mode "mirror"
+    }
+    node "convolution" id="membrane" label="Crystalline membrane definition" {
+        kernel "sharpen"
+        amount 0.14 unit="ratio"
+    }
+    node "pinch-bulge" id="gravity-heart" label="Moving reversible gravity heart" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        radius 1.45 unit="ratio"
+        amount 0.0 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "hue-rotate" id="living-spectrum" label="Migrating living spectrum" { angle 0.0 unit="degrees" }
+    node "kaleidoscope" id="prism-crown" label="Sevenfold organism prism" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        segments 7
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "contrast" id="depth" label="Bass-opened dimensional depth" { amount 1.0 unit="ratio" }
+    node "bloom" id="atmosphere" label="Air-opened festival atmosphere" {
+        radius 12 unit="px"
+        intensity 0.20 unit="ratio"
+    }
+
+    signal "audio-band" id="bass" band="low" response="decibel"
+    signal "audio-band" id="low-mid" band="low-mid" response="decibel"
+    signal "audio-band" id="high-mid" band="high-mid" response="decibel"
+    signal "audio-band" id="air" band="high" response="decibel"
+    signal "lfo" id="gravity-x" cycles=1 seconds=13 waveform="sine" phase=0.0
+    signal "lfo" id="gravity-y" cycles=1 seconds=17 waveform="triangle" phase=0.29
+    signal "lfo" id="gravity-direction" cycles=1 seconds=8 waveform="sine" phase=0.61
+    signal "lfo" id="colony-drift" cycles=1 seconds=19 waveform="sine" phase=0.17
+    signal "lfo" id="spectrum-current" cycles=1 seconds=23 waveform="sine" phase=0.41
+    signal "math" id="bass-gravity" operation="multiply" left="bass" right="gravity-direction"
+
+    route id="wandering-heart-x" from="gravity-x" to="gravity-heart" parameter="pinch-bulge/center-x" mode="replace" scale=0.30 offset=0.5 attack-ms=70 release-ms=420
+    route id="wandering-heart-y" from="gravity-y" to="gravity-heart" parameter="pinch-bulge/center-y" mode="replace" scale=0.24 offset=0.5 attack-ms=70 release-ms=420
+    route id="bass-reversible-gravity" from="bass-gravity" to="gravity-heart" parameter="pinch-bulge/amount" mode="replace" scale=1.0 offset=0.0 attack-ms=5 release-ms=260
+    route id="high-mid-gravity-radius" from="high-mid" to="gravity-heart" parameter="pinch-bulge/radius" mode="replace" curve="ease-in-out-sine" scale=-1.15 offset=1.75 attack-ms=8 release-ms=320
+    route id="bass-horizontal-colony" from="bass" to="colony" parameter="tile/repetitions-x" mode="replace" curve="ease-out-quint" scale=4.0 offset=3.0 attack-ms=8 release-ms=340
+    route id="low-mid-vertical-colony" from="low-mid" to="colony" parameter="tile/repetitions-y" mode="replace" curve="ease-in-out-sine" scale=4.0 offset=2.0 attack-ms=12 release-ms=360
+    route id="slow-colony-drift-x" from="colony-drift" to="colony" parameter="tile/offset-x" mode="replace" scale=240.0 offset=0.0 attack-ms=90 release-ms=520
+    route id="slow-colony-drift-y" from="gravity-y" to="colony" parameter="tile/offset-y" mode="replace" scale=150.0 offset=0.0 attack-ms=90 release-ms=520
+    route id="low-mid-prism-turn" from="low-mid" to="prism-crown" parameter="kaleidoscope/angle" mode="replace" curve="ease-in-out-sine" scale=210.0 offset=-105.0 attack-ms=20 release-ms=380
+    route id="slow-spectrum" from="spectrum-current" to="living-spectrum" parameter="hue-rotate/angle" mode="replace" scale=150.0 offset=0.0 attack-ms=90 release-ms=540
+    route id="bass-dimensional-depth" from="bass" to="depth" parameter="contrast/amount" mode="replace" curve="ease-out-quint" scale=1.25 offset=0.70 attack-ms=6 release-ms=300
+    route id="air-atmosphere-radius" from="air" to="atmosphere" parameter="bloom/radius" mode="replace" curve="ease-out-expo" scale=42.0 offset=4.0 attack-ms=6 release-ms=300
+    route id="air-atmosphere-energy" from="air" to="atmosphere" parameter="bloom/intensity" mode="replace" curve="ease-out-quint" scale=0.58 offset=0.16 attack-ms=6 release-ms=360
+
+    connect id="void-organism-one" from="void.image" to="organism-one.background"
+    connect id="aqua-organism-one" from="aqua-cell.image" to="organism-one.foreground"
+    connect id="organism-one-organism-two" from="organism-one.image" to="organism-two.background"
+    connect id="rose-organism-two" from="rose-cell.image" to="organism-two.foreground"
+    connect id="organism-two-organism-three" from="organism-two.image" to="organism-three.background"
+    connect id="spine-organism-three" from="amber-spine.image" to="organism-three.foreground"
+    connect id="organism-three-organism" from="organism-three.image" to="organism.background"
+    connect id="heart-organism" from="violet-heart.image" to="organism.foreground"
+    connect id="organism-colony" from="organism.image" to="colony.image"
+    connect id="colony-membrane" from="colony.image" to="membrane.image"
+    connect id="membrane-gravity" from="membrane.image" to="gravity-heart.image"
+    connect id="gravity-spectrum" from="gravity-heart.image" to="living-spectrum.image"
+    connect id="spectrum-prism" from="living-spectrum.image" to="prism-crown.image"
+    connect id="prism-depth" from="prism-crown.image" to="depth.image"
+    connect id="depth-atmosphere" from="depth.image" to="atmosphere.image"
+    sink id="program" input="atmosphere.image"
+}
