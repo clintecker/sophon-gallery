@@ -9,7 +9,7 @@ patch id="example-audio-fractal-tempest-organism" {
         evolution 0.0
         interpolant "quintic"
         octaves 6
-        lacunarity 2.0 unit="ratio"
+        lacunarity 1.45 unit="ratio"
         gain 0.48 unit="ratio"
         variant "fbm"
         octave-policy "resolution-aware"
@@ -23,7 +23,7 @@ patch id="example-audio-fractal-tempest-organism" {
         evolution 0.0
         interpolant "quintic"
         octaves 7
-        lacunarity 2.15 unit="ratio"
+        lacunarity 1.35 unit="ratio"
         gain 0.52 unit="ratio"
         variant "turbulence"
         octave-policy "resolution-aware"
@@ -37,7 +37,7 @@ patch id="example-audio-fractal-tempest-organism" {
         evolution 0.0
         interpolant "quintic"
         octaves 8
-        lacunarity 2.3 unit="ratio"
+        lacunarity 1.25 unit="ratio"
         gain 0.56 unit="ratio"
         variant "ridged"
         octave-policy "fixed"
@@ -99,14 +99,14 @@ patch id="example-audio-fractal-tempest-organism" {
     signal "math" id="bass-gravity" operation="multiply" left="bass" right="gravity-direction"
 
     route id="deep-field-time" from="deep-time" to="deep-atmosphere" parameter="fbm/evolution" mode="replace" scale=5.5 offset=0.0 attack-ms=180 release-ms=900
-    route id="turbulence-field-time" from="turbulence-time" to="solar-turbulence" parameter="fbm/evolution" mode="replace" scale=8.0 offset=2.0 attack-ms=120 release-ms=760
+    route id="turbulence-field-time" from="turbulence-time" to="solar-turbulence" parameter="fbm/evolution" mode="replace" scale=3.0 offset=0.5 attack-ms=120 release-ms=760
     route id="ridge-field-time" from="ridge-time" to="electric-ridges" parameter="fbm/evolution" mode="replace" scale=-7.0 offset=-1.0 attack-ms=140 release-ms=820
     route id="bass-deep-scale-x" from="bass" to="deep-atmosphere" parameter="fbm/frequency-x" mode="replace" curve="ease-out-quint" scale=8.0 offset=1.4 attack-ms=5 release-ms=420
     route id="bass-deep-scale-y" from="bass" to="deep-atmosphere" parameter="fbm/frequency-y" mode="replace" curve="ease-out-quint" scale=5.4 offset=1.0 attack-ms=5 release-ms=420
     route id="low-mid-turbulence-gain" from="low-mid" to="solar-turbulence" parameter="fbm/gain" mode="replace" curve="ease-in-out-sine" scale=0.72 offset=0.22 attack-ms=8 release-ms=460
-    route id="low-mid-turbulence-density" from="low-mid" to="solar-turbulence" parameter="fbm/lacunarity" mode="replace" curve="ease-in-out-sine" scale=1.8 offset=1.25 attack-ms=10 release-ms=480
-    route id="high-mid-ridge-scale-x" from="high-mid" to="electric-ridges" parameter="fbm/frequency-x" mode="replace" curve="ease-out-expo" scale=28.0 offset=2.5 attack-ms=5 release-ms=330
-    route id="high-mid-ridge-scale-y" from="high-mid" to="electric-ridges" parameter="fbm/frequency-y" mode="replace" curve="ease-out-expo" scale=18.0 offset=1.8 attack-ms=5 release-ms=330
+    route id="low-mid-turbulence-density" from="low-mid" to="solar-turbulence" parameter="fbm/lacunarity" mode="replace" curve="ease-in-out-sine" scale=0.35 offset=1.15 attack-ms=10 release-ms=480
+    route id="high-mid-ridge-scale-x" from="high-mid" to="electric-ridges" parameter="fbm/frequency-x" mode="replace" curve="ease-out-expo" scale=8.0 offset=2.5 attack-ms=5 release-ms=330
+    route id="high-mid-ridge-scale-y" from="high-mid" to="electric-ridges" parameter="fbm/frequency-y" mode="replace" curve="ease-out-expo" scale=5.0 offset=1.8 attack-ms=5 release-ms=330
     route id="air-ridge-gain" from="air" to="electric-ridges" parameter="fbm/gain" mode="replace" curve="ease-out-expo" scale=0.70 offset=0.24 attack-ms=4 release-ms=380
     route id="slow-prism-turn" from="prism-turn" to="storm-prism" parameter="kaleidoscope/angle" mode="replace" scale=94.0 offset=0.0 attack-ms=160 release-ms=900
     route id="bass-reversible-vortex" from="bass-gravity" to="vortex" parameter="swirl/angle" mode="replace" scale=220.0 offset=0.0 attack-ms=4 release-ms=340
