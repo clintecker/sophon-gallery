@@ -1,0 +1,137 @@
+// Three bounded fractal-noise variants become one living, audio-conducted GPU organism.
+patch id="example-audio-fractal-tempest-organism" {
+    output width=1920 height=1080 rate-hz=30
+
+    node "fbm" id="deep-atmosphere" label="Slow indigo teal fBm atmosphere" {
+        seed 9510137
+        frequency-x 2.8
+        frequency-y 1.9
+        evolution 0.0
+        interpolant "quintic"
+        octaves 6
+        lacunarity 1.45 unit="ratio"
+        gain 0.48 unit="ratio"
+        variant "fbm"
+        octave-policy "resolution-aware"
+        low coverage-r=0.004 coverage-g=0.012 coverage-b=0.075 coverage-a=1.0 emission-r=0.0 emission-g=0.002 emission-b=0.012
+        high coverage-r=0.01 coverage-g=0.42 coverage-b=0.52 coverage-a=1.0 emission-r=0.0 emission-g=0.055 emission-b=0.09
+    }
+    node "fbm" id="solar-turbulence" label="Folded amber cyan turbulence" {
+        seed 9510211
+        frequency-x 5.2
+        frequency-y 3.4
+        evolution 0.0
+        interpolant "quintic"
+        octaves 7
+        lacunarity 1.35 unit="ratio"
+        gain 0.52 unit="ratio"
+        variant "turbulence"
+        octave-policy "resolution-aware"
+        low coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        high coverage-r=0.48 coverage-g=0.14 coverage-b=0.005 coverage-a=0.50 emission-r=0.08 emission-g=0.012 emission-b=0.0
+    }
+    node "fbm" id="electric-ridges" label="Sharp violet gold fractal ridges" {
+        seed 9510329
+        frequency-x 7.5
+        frequency-y 4.6
+        evolution 0.0
+        interpolant "quintic"
+        octaves 8
+        lacunarity 1.25 unit="ratio"
+        gain 0.56 unit="ratio"
+        variant "ridged"
+        octave-policy "fixed"
+        low coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        high coverage-r=0.067 coverage-g=0.01 coverage-b=0.083 coverage-a=0.10 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="storm-body" label="Turbulence over deep atmosphere"
+    node "composite" id="fractal-body" label="Electric ridges through folded storm"
+    node "kaleidoscope" id="storm-prism" label="Thirteenfold asymmetric storm prism" {
+        center-x 0.46 unit="ratio"
+        center-y 0.53 unit="ratio"
+        segments 13
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "swirl" id="vortex" label="Bass-reversible fractal gravity" {
+        center-x 0.5 unit="ratio"
+        center-y 0.5 unit="ratio"
+        radius 1.5 unit="ratio"
+        angle 0.0 unit="degrees"
+        sampling "linear"
+        edge "mirror"
+    }
+    node "contrast" id="depth" label="Low-mid fractal relief" { amount 1.18 unit="ratio" }
+    node "saturation" id="pigment" label="Stable multi-hue festival pigment" { amount 1.24 unit="ratio" }
+    node "hue-rotate" id="spectrum" label="High-mid spectral steering" { angle 0.0 unit="degrees" }
+    node "posterize" id="contours" label="Ten-level graphic fractal contours" { levels 10 }
+    node "bloom" id="atmosphere" label="Air-opened fractal radiance" {
+        radius 12 unit="px"
+        intensity 0.06 unit="ratio"
+    }
+    node "transform" id="camera" label="Slow wandering breathing camera" {
+        translation-x 0.0 unit="px"
+        translation-y 0.0 unit="px"
+        scale-x 1.06 unit="ratio"
+        scale-y 1.06 unit="ratio"
+        shear-x 0.0 unit="ratio"
+        shear-y 0.0 unit="ratio"
+        rotation 0.0 unit="degrees"
+        rotation-per-frame 0.0 unit="degrees"
+        pivot-x 0.5 unit="ratio"
+        pivot-y 0.5 unit="ratio"
+        sampling "linear"
+        edge "mirror"
+    }
+
+    signal "audio-band" id="bass" band="low" response="decibel"
+    signal "audio-band" id="low-mid" band="low-mid" response="decibel"
+    signal "audio-band" id="high-mid" band="high-mid" response="decibel"
+    signal "audio-band" id="air" band="high" response="decibel"
+    signal "lfo" id="deep-time" cycles=1 seconds=29 waveform="sine" phase=0.0
+    signal "lfo" id="turbulence-time" cycles=1 seconds=19 waveform="triangle" phase=0.31
+    signal "lfo" id="ridge-time" cycles=1 seconds=23 waveform="sine" phase=0.57
+    signal "lfo" id="prism-turn" cycles=1 seconds=17 waveform="sine" phase=0.14
+    signal "lfo" id="gravity-direction" cycles=1 seconds=11 waveform="triangle" phase=0.41
+    signal "lfo" id="wander-x" cycles=1 seconds=31 waveform="sine" phase=0.12
+    signal "lfo" id="wander-y" cycles=1 seconds=37 waveform="triangle" phase=0.39
+    signal "math" id="bass-gravity" operation="multiply" left="bass" right="gravity-direction"
+
+    route id="deep-field-time" from="deep-time" to="deep-atmosphere" parameter="fbm/evolution" mode="replace" scale=5.5 offset=0.0 attack-ms=180 release-ms=900
+    route id="turbulence-field-time" from="turbulence-time" to="solar-turbulence" parameter="fbm/evolution" mode="replace" scale=3.0 offset=0.5 attack-ms=120 release-ms=760
+    route id="ridge-field-time" from="ridge-time" to="electric-ridges" parameter="fbm/evolution" mode="replace" scale=-7.0 offset=-1.0 attack-ms=140 release-ms=820
+    route id="bass-deep-scale-x" from="bass" to="deep-atmosphere" parameter="fbm/frequency-x" mode="replace" curve="ease-out-quint" scale=8.0 offset=1.4 attack-ms=5 release-ms=420
+    route id="bass-deep-scale-y" from="bass" to="deep-atmosphere" parameter="fbm/frequency-y" mode="replace" curve="ease-out-quint" scale=5.4 offset=1.0 attack-ms=5 release-ms=420
+    route id="low-mid-turbulence-gain" from="low-mid" to="solar-turbulence" parameter="fbm/gain" mode="replace" curve="ease-in-out-sine" scale=0.72 offset=0.22 attack-ms=8 release-ms=460
+    route id="low-mid-turbulence-density" from="low-mid" to="solar-turbulence" parameter="fbm/lacunarity" mode="replace" curve="ease-in-out-sine" scale=0.35 offset=1.15 attack-ms=10 release-ms=480
+    route id="high-mid-ridge-scale-x" from="high-mid" to="electric-ridges" parameter="fbm/frequency-x" mode="replace" curve="ease-out-expo" scale=8.0 offset=2.5 attack-ms=5 release-ms=330
+    route id="high-mid-ridge-scale-y" from="high-mid" to="electric-ridges" parameter="fbm/frequency-y" mode="replace" curve="ease-out-expo" scale=5.0 offset=1.8 attack-ms=5 release-ms=330
+    route id="air-ridge-gain" from="air" to="electric-ridges" parameter="fbm/gain" mode="replace" curve="ease-out-expo" scale=0.70 offset=0.24 attack-ms=4 release-ms=380
+    route id="slow-prism-turn" from="prism-turn" to="storm-prism" parameter="kaleidoscope/angle" mode="replace" scale=94.0 offset=0.0 attack-ms=160 release-ms=900
+    route id="bass-reversible-vortex" from="bass-gravity" to="vortex" parameter="swirl/angle" mode="replace" scale=220.0 offset=0.0 attack-ms=4 release-ms=340
+    route id="high-mid-vortex-radius" from="high-mid" to="vortex" parameter="swirl/radius" mode="replace" curve="ease-out-expo" scale=-1.25 offset=1.62 attack-ms=6 release-ms=380
+    route id="low-mid-depth" from="low-mid" to="depth" parameter="contrast/amount" mode="replace" curve="ease-out-quint" scale=1.0 offset=1.5 attack-ms=7 release-ms=420
+    route id="air-pigment" from="air" to="pigment" parameter="saturation/amount" mode="replace" curve="ease-out-expo" scale=0.25 offset=1.05 attack-ms=4 release-ms=440
+    route id="high-mid-spectrum" from="high-mid" to="spectrum" parameter="hue-rotate/angle" mode="replace" curve="ease-in-out-sine" scale=90.0 offset=-45.0 attack-ms=6 release-ms=360
+    route id="air-bloom-radius" from="air" to="atmosphere" parameter="bloom/radius" mode="replace" curve="ease-out-expo" scale=10.0 offset=3.0 attack-ms=5 release-ms=460
+    route id="air-bloom-energy" from="air" to="atmosphere" parameter="bloom/intensity" mode="replace" curve="ease-out-expo" scale=0.05 offset=0.01 attack-ms=4 release-ms=380
+    route id="camera-wander-x" from="wander-x" to="camera" parameter="transform/translation-x" mode="replace" scale=180.0 offset=0.0 attack-ms=180 release-ms=920
+    route id="camera-wander-y" from="wander-y" to="camera" parameter="transform/translation-y" mode="replace" scale=110.0 offset=0.0 attack-ms=180 release-ms=920
+    route id="bass-camera-breath-x" from="bass" to="camera" parameter="transform/scale-x" mode="replace" curve="ease-out-quint" scale=0.32 offset=0.95 attack-ms=4 release-ms=330
+    route id="bass-camera-breath-y" from="bass" to="camera" parameter="transform/scale-y" mode="replace" curve="ease-out-quint" scale=0.32 offset=0.95 attack-ms=4 release-ms=330
+
+    connect id="deep-storm-base" from="deep-atmosphere.image" to="storm-body.background"
+    connect id="turbulence-storm-layer" from="solar-turbulence.image" to="storm-body.foreground"
+    connect id="storm-fractal-base" from="storm-body.image" to="fractal-body.background"
+    connect id="ridge-fractal-layer" from="electric-ridges.image" to="fractal-body.foreground"
+    connect id="fractal-prism" from="fractal-body.image" to="storm-prism.image"
+    connect id="prism-depth" from="storm-prism.image" to="depth.image"
+    connect id="depth-vortex" from="depth.image" to="vortex.image"
+    connect id="vortex-pigment" from="vortex.image" to="pigment.image"
+    connect id="pigment-spectrum" from="pigment.image" to="spectrum.image"
+    connect id="spectrum-contours" from="spectrum.image" to="contours.image"
+    connect id="contours-atmosphere" from="contours.image" to="atmosphere.image"
+    connect id="atmosphere-camera" from="atmosphere.image" to="camera.image"
+    sink id="program" input="camera.image"
+}
