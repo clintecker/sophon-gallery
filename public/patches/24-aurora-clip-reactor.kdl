@@ -1,0 +1,41 @@
+// An ordinary H.264 clip becomes a reflected, blooming aurora reactor.
+patch id="example-aurora-clip-reactor" {
+    output width=240 height=135 rate-hz=30
+
+    node "clip" id="aurora-loop" label="Authored H.264 aurora loop" {
+        asset "assets/aurora-engine-loop.mp4"
+        color "override-srgb"
+        playback "loop"
+        start-time-ms 0
+        sizing "fill"
+    }
+    node "luma-key" id="hot-energy" label="Extract the brightest moving energy" {
+        mode "dark"
+        threshold 0.10 unit="ratio"
+        softness 0.24 unit="ratio"
+    }
+    node "mirror" id="opposed-energy" label="Reflect the moving energy" {
+        axis "both"
+    }
+    node "composite" id="energy-collision" label="Collide original and reflection"
+    node "blur" id="reactor-halo" label="Spread a cinematic halo" {
+        radius 8 unit="px"
+    }
+    node "modulate" id="sharp-core" label="Retain sharp reactor detail" {
+        amount 0.72 unit="ratio"
+    }
+    node "composite" id="bloomed-reactor" label="Sharp clip detail over halo"
+    node "composite" id="program-image" label="Authored clip reactor"
+
+    connect id="clip-key" from="aurora-loop.image" to="hot-energy.image"
+    connect id="key-mirror" from="hot-energy.image" to="opposed-energy.image"
+    connect id="original-energy" from="hot-energy.image" to="energy-collision.background"
+    connect id="reflected-energy" from="opposed-energy.image" to="energy-collision.foreground"
+    connect id="collision-halo" from="energy-collision.image" to="reactor-halo.image"
+    connect id="collision-core" from="energy-collision.image" to="sharp-core.image"
+    connect id="halo-layer" from="reactor-halo.image" to="bloomed-reactor.background"
+    connect id="core-layer" from="sharp-core.image" to="bloomed-reactor.foreground"
+    connect id="clip-foundation" from="aurora-loop.image" to="program-image.background"
+    connect id="reactor-layer" from="bloomed-reactor.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

@@ -1,0 +1,12 @@
+// Coverage color and independent light can vary separately.
+patch id="example-emissive-gradient" {
+    output width=16 height=9 rate-hz=60
+
+    node "gradient" id="light" label="Rising cyan light" {
+        axis "vertical"
+        sample-a coverage-r=0.02 coverage-g=0.02 coverage-b=0.02 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.02 coverage-g=0.02 coverage-b=0.02 coverage-a=1.0 emission-r=0.3 emission-g=1.4 emission-b=2.2
+    }
+
+    sink id="program" input="light.image"
+}

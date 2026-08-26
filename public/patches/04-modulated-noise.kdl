@@ -1,0 +1,16 @@
+// A pointwise operation consumes and produces the logical image port.
+patch id="example-modulated-noise" {
+    output width=16 height=9 rate-hz=30
+
+    node "noise" id="grain" label="Warm grain" {
+        seed 314159
+        sample-a coverage-r=0.05 coverage-g=0.0 coverage-b=0.10 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=1.0 coverage-g=0.30 coverage-b=0.05 coverage-a=1.0 emission-r=0.5 emission-g=0.1 emission-b=0.0
+    }
+    node "modulate" id="dim" label="Grain level" {
+        amount 0.35 unit="ratio"
+    }
+
+    connect id="grain-to-dim" from="grain.image" to="dim.image"
+    sink id="program" input="dim.image"
+}

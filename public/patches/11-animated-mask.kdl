@@ -1,0 +1,36 @@
+// A smooth matte reveals an emissive color field while subtle sparks animate above it.
+patch id="example-animated-mask" {
+    output width=96 height=54 rate-hz=30
+
+    node "gradient" id="background" label="Deep blue background" {
+        axis "vertical"
+        sample-a coverage-r=0.002 coverage-g=0.006 coverage-b=0.025 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.025 coverage-g=0.004 coverage-b=0.06 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="aurora" label="Emissive aurora" {
+        axis "vertical"
+        sample-a coverage-r=0.0 coverage-g=0.18 coverage-b=0.28 coverage-a=1.0 emission-r=0.0 emission-g=0.9 emission-b=1.7
+        sample-b coverage-r=0.30 coverage-g=0.0 coverage-b=0.20 coverage-a=1.0 emission-r=1.5 emission-g=0.0 emission-b=0.8
+    }
+    node "gradient" id="matte" label="Left-to-right reveal matte" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=6.0 emission-g=0.0 emission-b=6.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=6.0 emission-g=0.0 emission-b=6.0
+    }
+    node "mask" id="reveal" label="Smoothly revealed aurora"
+    node "composite" id="aurora-over-night" label="Masked aurora over night"
+    node "noise" id="sparks" label="Animated blue sparks" {
+        seed 1111
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.02 coverage-b=0.04 coverage-a=0.10 emission-r=0.0 emission-g=0.10 emission-b=0.25
+    }
+    node "composite" id="final" label="Living masked aurora"
+
+    connect id="aurora-image" from="aurora.image" to="reveal.image"
+    connect id="matte" from="matte.image" to="reveal.mask"
+    connect id="background" from="background.image" to="aurora-over-night.background"
+    connect id="aurora-layer" from="reveal.image" to="aurora-over-night.foreground"
+    connect id="base" from="aurora-over-night.image" to="final.background"
+    connect id="sparks" from="sparks.image" to="final.foreground"
+    sink id="program" input="final.image"
+}

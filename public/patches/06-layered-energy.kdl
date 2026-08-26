@@ -1,0 +1,32 @@
+// A generated texture is dimmed, composited, then composited again.
+patch id="example-layered-energy" {
+    output width=24 height=14 rate-hz=60
+
+    node "gradient" id="background" label="Night background" {
+        axis "vertical"
+        sample-a coverage-r=0.01 coverage-g=0.01 coverage-b=0.03 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.08 coverage-g=0.12 coverage-b=0.30 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "noise" id="energy" label="Emissive energy" {
+        seed 9001
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=2.5 emission-g=0.5 emission-b=1.5
+    }
+    node "modulate" id="soften" label="Energy level" {
+        amount 0.45 unit="ratio"
+    }
+    node "gradient" id="veil" label="Green veil" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.05 coverage-g=0.55 coverage-b=0.25 coverage-a=0.45 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="energy-over-background" label="Energy over night"
+    node "composite" id="final" label="Veiled program"
+
+    connect id="energy-to-soften" from="energy.image" to="soften.image"
+    connect id="background" from="background.image" to="energy-over-background.background"
+    connect id="energy" from="soften.image" to="energy-over-background.foreground"
+    connect id="base" from="energy-over-background.image" to="final.background"
+    connect id="veil" from="veil.image" to="final.foreground"
+    sink id="program" input="final.image"
+}

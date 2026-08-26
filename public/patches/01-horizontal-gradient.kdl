@@ -1,0 +1,12 @@
+// Start here: one opaque horizontal gradient connected directly to the sink.
+patch id="example-horizontal-gradient" {
+    output width=16 height=9 rate-hz=60
+
+    node "gradient" id="color" label="Midnight to magenta" {
+        axis "horizontal"
+        sample-a coverage-r=0.02 coverage-g=0.04 coverage-b=0.12 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.90 coverage-g=0.18 coverage-b=0.48 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+
+    sink id="program" input="color.image"
+}

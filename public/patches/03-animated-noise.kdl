@@ -1,0 +1,12 @@
+// Counter-keyed noise changes by explicit frame identity, not wall-clock time.
+patch id="example-animated-noise" {
+    output width=16 height=9 rate-hz=30
+
+    node "noise" id="grain" label="Animated grain" {
+        seed 42
+        sample-a coverage-r=0.01 coverage-g=0.02 coverage-b=0.05 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.80 coverage-g=0.95 coverage-b=1.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+
+    sink id="program" input="grain.image"
+}

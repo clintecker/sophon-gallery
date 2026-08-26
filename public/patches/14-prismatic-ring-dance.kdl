@@ -1,0 +1,74 @@
+// Three hollow neon rings cross in a seamless dance over indigo space.
+patch id="example-prismatic-ring-dance" {
+    output width=240 height=120 rate-hz=30
+
+    node "gradient" id="night" label="Indigo night" {
+        axis "vertical"
+        sample-a coverage-r=0.001 coverage-g=0.002 coverage-b=0.014 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.012 coverage-g=0.002 coverage-b=0.035 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.015
+    }
+    node "gradient" id="cyan-light" label="Cyan radial light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=1.5 emission-b=2.8
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="hollow-matte" label="Transparent center matte" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="cyan-ring" label="Hollow cyan ring"
+    node "scroll" id="cyan-dance" label="Cyan horizontal sweep" {
+        x-offset -80 unit="px"
+        y-offset -28 unit="px"
+        x-per-frame 8 unit="px"
+        y-per-frame 4 unit="px"
+    }
+
+    node "gradient" id="pink-light" label="Hot pink radial light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=2.8 emission-g=0.0 emission-b=0.65
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="pink-ring" label="Hollow pink ring"
+    node "scroll" id="pink-dance" label="Pink counter sweep" {
+        x-offset 80 unit="px"
+        y-offset 28 unit="px"
+        x-per-frame -8 unit="px"
+        y-per-frame -4 unit="px"
+    }
+
+    node "gradient" id="gold-light" label="Electric gold radial light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=2.4 emission-g=0.9 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="gold-ring" label="Hollow gold ring"
+    node "scroll" id="gold-dance" label="Gold vertical sweep" {
+        x-offset 0 unit="px"
+        y-offset -42 unit="px"
+        x-per-frame 0 unit="px"
+        y-per-frame 4 unit="px"
+    }
+
+    node "composite" id="cyan-pink" label="Crossing cyan and pink rings"
+    node "composite" id="all-rings" label="Three crossing rings"
+    node "composite" id="program-image" label="Prismatic rings in electric space"
+
+    connect id="cyan-light-image" from="cyan-light.image" to="cyan-ring.image"
+    connect id="cyan-hollow" from="hollow-matte.image" to="cyan-ring.mask"
+    connect id="cyan-motion" from="cyan-ring.image" to="cyan-dance.image"
+    connect id="pink-light-image" from="pink-light.image" to="pink-ring.image"
+    connect id="pink-hollow" from="hollow-matte.image" to="pink-ring.mask"
+    connect id="pink-motion" from="pink-ring.image" to="pink-dance.image"
+    connect id="gold-light-image" from="gold-light.image" to="gold-ring.image"
+    connect id="gold-hollow" from="hollow-matte.image" to="gold-ring.mask"
+    connect id="gold-motion" from="gold-ring.image" to="gold-dance.image"
+    connect id="cyan-layer" from="cyan-dance.image" to="cyan-pink.background"
+    connect id="pink-layer" from="pink-dance.image" to="cyan-pink.foreground"
+    connect id="two-rings" from="cyan-pink.image" to="all-rings.background"
+    connect id="gold-layer" from="gold-dance.image" to="all-rings.foreground"
+    connect id="space" from="night.image" to="program-image.background"
+    connect id="rings" from="all-rings.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

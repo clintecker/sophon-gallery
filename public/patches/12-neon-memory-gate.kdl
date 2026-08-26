@@ -1,0 +1,57 @@
+// Three soft neon bodies cross, wrap, and return exactly to their starting positions.
+patch id="example-neon-orbits" {
+    output width=180 height=90 rate-hz=30
+
+    node "gradient" id="night" label="Deep blue-black space" {
+        axis "vertical"
+        sample-a coverage-r=0.001 coverage-g=0.003 coverage-b=0.012 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.012 coverage-g=0.001 coverage-b=0.025 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="cyan-orb" label="Cyan ultraviolet body" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=1.8 emission-b=3.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "scroll" id="cyan-orbit" label="Cyan diagonal orbit" {
+        x-offset -55 unit="px"
+        y-offset 0 unit="px"
+        x-per-frame 6 unit="px"
+        y-per-frame 3 unit="px"
+    }
+    node "gradient" id="pink-orb" label="Pink crimson body" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=3.5 emission-g=0.0 emission-b=0.8
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "scroll" id="pink-orbit" label="Pink counter-orbit" {
+        x-offset 55 unit="px"
+        y-offset 0 unit="px"
+        x-per-frame -6 unit="px"
+        y-per-frame -3 unit="px"
+    }
+    node "gradient" id="gold-orb" label="Electric gold body" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=3.0 emission-g=1.2 emission-b=0.05
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "scroll" id="gold-orbit" label="Gold vertical orbit" {
+        x-offset 0 unit="px"
+        y-offset -28 unit="px"
+        x-per-frame 0 unit="px"
+        y-per-frame 3 unit="px"
+    }
+    node "composite" id="crossing-orbs" label="Cyan and pink crossing"
+    node "composite" id="three-bodies" label="Three-body neon field"
+    node "composite" id="program-image" label="Neon orbits in space"
+
+    connect id="cyan-source" from="cyan-orb.image" to="cyan-orbit.image"
+    connect id="pink-source" from="pink-orb.image" to="pink-orbit.image"
+    connect id="gold-source" from="gold-orb.image" to="gold-orbit.image"
+    connect id="cyan-layer" from="cyan-orbit.image" to="crossing-orbs.background"
+    connect id="pink-layer" from="pink-orbit.image" to="crossing-orbs.foreground"
+    connect id="crossing-light" from="crossing-orbs.image" to="three-bodies.background"
+    connect id="gold-light" from="gold-orbit.image" to="three-bodies.foreground"
+    connect id="space" from="night.image" to="program-image.background"
+    connect id="orbits" from="three-bodies.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

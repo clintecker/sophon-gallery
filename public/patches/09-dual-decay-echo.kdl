@@ -1,0 +1,34 @@
+// One previous image returns through two decay strengths before fresh sparks arrive.
+patch id="example-dual-decay-echo" {
+    output width=32 height=18 rate-hz=30
+
+    node "gradient" id="background" label="Deep red horizon" {
+        axis "horizontal"
+        sample-a coverage-r=0.01 coverage-g=0.0 coverage-b=0.02 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.24 coverage-g=0.015 coverage-b=0.005 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "noise" id="sparks" label="Fresh gold sparks" {
+        seed 909
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=4.0 emission-g=1.7 emission-b=0.15
+    }
+    node "modulate" id="slow-echo" label="Long echo" {
+        amount 0.74 unit="ratio"
+    }
+    node "modulate" id="fast-echo" label="Short echo" {
+        amount 0.31 unit="ratio"
+    }
+    node "composite" id="fresh" label="Fresh gold image"
+    node "composite" id="echoes" label="Two decay strengths"
+    node "composite" id="final" label="Golden echo program"
+
+    connect id="background" from="background.image" to="fresh.background"
+    connect id="sparks" from="sparks.image" to="fresh.foreground"
+    connect id="previous-slow" from="final.image" to="slow-echo.image" timing="previous-frame"
+    connect id="previous-fast" from="final.image" to="fast-echo.image" timing="previous-frame"
+    connect id="slow" from="slow-echo.image" to="echoes.background"
+    connect id="fast" from="fast-echo.image" to="echoes.foreground"
+    connect id="fresh-image" from="fresh.image" to="final.background"
+    connect id="echo-image" from="echoes.image" to="final.foreground"
+    sink id="program" input="final.image"
+}

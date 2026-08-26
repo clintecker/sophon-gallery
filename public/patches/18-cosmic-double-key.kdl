@@ -1,0 +1,103 @@
+// Two synthetic "filmed" objects are keyed from green and black stages, then reunited in space.
+patch id="example-cosmic-double-key" {
+    output width=180 height=90 rate-hz=30
+
+    node "noise" id="starfield" label="Animated violet starfield" {
+        seed 881
+        sample-a coverage-r=0.001 coverage-g=0.002 coverage-b=0.012 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.018 coverage-g=0.003 coverage-b=0.05 coverage-a=1.0 emission-r=0.04 emission-g=0.0 emission-b=0.11
+    }
+    node "gradient" id="green-stage" label="Synthetic green screen" {
+        axis "horizontal"
+        sample-a coverage-r=0.0 coverage-g=0.7 coverage-b=0.03 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.7 coverage-b=0.03 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="magenta-performer" label="Magenta performer on green" {
+        axis "radial"
+        sample-a coverage-r=0.9 coverage-g=0.0 coverage-b=0.55 coverage-a=1.0 emission-r=1.3 emission-g=0.0 emission-b=0.9
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="hollow-matte" label="Hollow performer centers" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="magenta-ring" label="Hollow magenta performer"
+    node "composite" id="green-screen-take" label="Performer filmed on green"
+    node "scroll" id="magenta-flight" label="Moving green-screen take" {
+        x-offset 53 unit="px"
+        y-offset 11 unit="px"
+        x-per-frame 4 unit="px"
+        y-per-frame -2 unit="px"
+    }
+    node "chroma-key" id="remove-green" label="Remove the green stage" {
+        key-red 0.0
+        key-green 0.7
+        key-blue 0.03
+        threshold 0.45 unit="ratio"
+        softness 0.08 unit="ratio"
+    }
+
+    node "gradient" id="black-stage" label="Synthetic black stage" {
+        axis "vertical"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "gradient" id="gold-performer" label="Gold performer on black" {
+        axis "radial"
+        sample-a coverage-r=1.0 coverage-g=0.35 coverage-b=0.01 coverage-a=1.0 emission-r=1.8 emission-g=0.45 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="gold-ring" label="Hollow gold performer"
+    node "composite" id="black-screen-take" label="Performer filmed on black"
+    node "scroll" id="gold-flight" label="Moving black-stage take" {
+        x-offset -47 unit="px"
+        y-offset -19 unit="px"
+        x-per-frame -5 unit="px"
+        y-per-frame 3 unit="px"
+    }
+    node "luma-key" id="remove-black" label="Remove the dark stage" {
+        mode "dark"
+        threshold 0.035 unit="ratio"
+        softness 0.18 unit="ratio"
+    }
+
+    node "composite" id="keyed-performers" label="Both isolated performers"
+    node "mirror" id="opposite-performers" label="Opposing keyed reflections" {
+        axis "both"
+    }
+    node "composite" id="keyed-symmetry" label="Four keyed moving rings"
+    node "blur" id="keyed-halo" label="Shared cinematic glow" {
+        radius 7 unit="px"
+    }
+    node "modulate" id="keyed-core" label="Controlled crisp cores" {
+        amount 0.62 unit="ratio"
+    }
+    node "composite" id="bloomed-performers" label="Glowing keyed performers"
+    node "composite" id="program-image" label="Cosmic double-key scene"
+
+    connect id="green-backdrop" from="green-stage.image" to="green-screen-take.background"
+    connect id="magenta-on-green" from="magenta-performer.image" to="green-screen-take.foreground"
+    connect id="green-removal" from="green-screen-take.image" to="remove-green.image"
+    connect id="magenta-shape" from="remove-green.image" to="magenta-ring.image"
+    connect id="magenta-center" from="hollow-matte.image" to="magenta-ring.mask"
+    connect id="green-take-motion" from="magenta-ring.image" to="magenta-flight.image"
+    connect id="black-backdrop" from="black-stage.image" to="black-screen-take.background"
+    connect id="gold-on-black" from="gold-performer.image" to="black-screen-take.foreground"
+    connect id="black-removal" from="black-screen-take.image" to="remove-black.image"
+    connect id="gold-shape" from="remove-black.image" to="gold-ring.image"
+    connect id="gold-center" from="hollow-matte.image" to="gold-ring.mask"
+    connect id="black-take-motion" from="gold-ring.image" to="gold-flight.image"
+    connect id="magenta-layer" from="magenta-flight.image" to="keyed-performers.background"
+    connect id="gold-layer" from="gold-flight.image" to="keyed-performers.foreground"
+    connect id="reflect-performers" from="keyed-performers.image" to="opposite-performers.image"
+    connect id="symmetry-original" from="keyed-performers.image" to="keyed-symmetry.background"
+    connect id="symmetry-reflection" from="opposite-performers.image" to="keyed-symmetry.foreground"
+    connect id="performer-halo" from="keyed-symmetry.image" to="keyed-halo.image"
+    connect id="performer-core" from="keyed-symmetry.image" to="keyed-core.image"
+    connect id="halo-layer" from="keyed-halo.image" to="bloomed-performers.background"
+    connect id="core-layer" from="keyed-core.image" to="bloomed-performers.foreground"
+    connect id="space" from="starfield.image" to="program-image.background"
+    connect id="performers" from="bloomed-performers.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}

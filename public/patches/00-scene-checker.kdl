@@ -1,0 +1,10 @@
+// A scene-linear checker verifies exact cell geometry without external media.
+patch id="example-scene-checker" {
+    output width=16 height=8 rate-hz=60
+    node "scene-checker" id="grid" label="Scene-linear checker" {
+        cell-size 2 unit="px"
+        sample-a coverage-r=0.02 coverage-g=0.02 coverage-b=0.02 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.3 coverage-g=0.0 coverage-b=0.2 coverage-a=1.0 emission-r=0.0 emission-g=0.2 emission-b=0.5
+    }
+    sink id="program" input="grid.image"
+}

@@ -1,0 +1,118 @@
+// Three remembered neon rings weave a luminous portal without a loop-boundary flash.
+patch id="example-prismatic-ribbon-portal" {
+    output width=240 height=135 rate-hz=30
+
+    node "gradient" id="deep-space" label="Deep blue vertical space" {
+        axis "vertical"
+        sample-a coverage-r=0.001 coverage-g=0.002 coverage-b=0.012 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.018 coverage-g=0.002 coverage-b=0.045 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.018
+    }
+    node "gradient" id="portal-haze" label="Violet portal haze" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.10 emission-g=0.005 emission-b=0.24
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "composite" id="portal-space" label="Violet haze in deep space"
+
+    node "gradient" id="hollow-matte" label="Shared hollow center matte" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=1.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+
+    node "gradient" id="cyan-light" label="Electric cyan radial light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=1.2 emission-b=2.2
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="cyan-ring" label="Hollow cyan ring"
+    node "mask" id="cyan-edge" label="Tight cyan ring edge"
+    node "scroll" id="cyan-orbit" label="Cyan climbing orbit" {
+        x-offset -82 unit="px"
+        y-offset -34 unit="px"
+        x-per-frame 5 unit="px"
+        y-per-frame 2 unit="px"
+    }
+    node "modulate" id="cyan-decay" label="Fading cyan memory" {
+        amount 0.45 unit="ratio"
+    }
+    node "composite" id="cyan-ribbon" label="Remembered cyan ribbon"
+
+    node "gradient" id="magenta-light" label="Laser magenta radial light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=2.2 emission-g=0.0 emission-b=0.6
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="magenta-ring" label="Hollow magenta ring"
+    node "mask" id="magenta-edge" label="Tight magenta ring edge"
+    node "scroll" id="magenta-orbit" label="Magenta counter orbit" {
+        x-offset 84 unit="px"
+        y-offset -24 unit="px"
+        x-per-frame -4 unit="px"
+        y-per-frame 3 unit="px"
+    }
+    node "modulate" id="magenta-decay" label="Fading magenta memory" {
+        amount 0.42 unit="ratio"
+    }
+    node "composite" id="magenta-ribbon" label="Remembered magenta ribbon"
+
+    node "gradient" id="gold-light" label="Solar gold radial light" {
+        axis "radial"
+        sample-a coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=2.0 emission-g=0.85 emission-b=0.0
+        sample-b coverage-r=0.0 coverage-g=0.0 coverage-b=0.0 coverage-a=0.0 emission-r=0.0 emission-g=0.0 emission-b=0.0
+    }
+    node "mask" id="gold-ring" label="Hollow gold ring"
+    node "mask" id="gold-edge" label="Tight gold ring edge"
+    node "scroll" id="gold-orbit" label="Gold rising counter orbit" {
+        x-offset -18 unit="px"
+        y-offset 54 unit="px"
+        x-per-frame 3 unit="px"
+        y-per-frame -5 unit="px"
+    }
+    node "modulate" id="gold-decay" label="Fading gold memory" {
+        amount 0.40 unit="ratio"
+    }
+    node "composite" id="gold-ribbon" label="Remembered gold ribbon"
+
+    node "composite" id="cyan-magenta" label="Braided cyan and magenta memory"
+    node "composite" id="all-ribbons" label="Three-color remembered braid"
+    node "composite" id="program-image" label="Prismatic ribbon portal"
+
+    connect id="space" from="deep-space.image" to="portal-space.background"
+    connect id="haze" from="portal-haze.image" to="portal-space.foreground"
+
+    connect id="cyan-light-image" from="cyan-light.image" to="cyan-ring.image"
+    connect id="cyan-hollow" from="hollow-matte.image" to="cyan-ring.mask"
+    connect id="cyan-ring-image" from="cyan-ring.image" to="cyan-edge.image"
+    connect id="cyan-edge-matte" from="hollow-matte.image" to="cyan-edge.mask"
+    connect id="cyan-motion" from="cyan-edge.image" to="cyan-orbit.image"
+    connect id="previous-cyan" from="cyan-ribbon.image" to="cyan-decay.image" timing="previous-frame"
+    connect id="fading-cyan" from="cyan-decay.image" to="cyan-ribbon.background"
+    connect id="fresh-cyan" from="cyan-orbit.image" to="cyan-ribbon.foreground"
+
+    connect id="magenta-light-image" from="magenta-light.image" to="magenta-ring.image"
+    connect id="magenta-hollow" from="hollow-matte.image" to="magenta-ring.mask"
+    connect id="magenta-ring-image" from="magenta-ring.image" to="magenta-edge.image"
+    connect id="magenta-edge-matte" from="hollow-matte.image" to="magenta-edge.mask"
+    connect id="magenta-motion" from="magenta-edge.image" to="magenta-orbit.image"
+    connect id="previous-magenta" from="magenta-ribbon.image" to="magenta-decay.image" timing="previous-frame"
+    connect id="fading-magenta" from="magenta-decay.image" to="magenta-ribbon.background"
+    connect id="fresh-magenta" from="magenta-orbit.image" to="magenta-ribbon.foreground"
+
+    connect id="gold-light-image" from="gold-light.image" to="gold-ring.image"
+    connect id="gold-hollow" from="hollow-matte.image" to="gold-ring.mask"
+    connect id="gold-ring-image" from="gold-ring.image" to="gold-edge.image"
+    connect id="gold-edge-matte" from="hollow-matte.image" to="gold-edge.mask"
+    connect id="gold-motion" from="gold-edge.image" to="gold-orbit.image"
+    connect id="previous-gold" from="gold-ribbon.image" to="gold-decay.image" timing="previous-frame"
+    connect id="fading-gold" from="gold-decay.image" to="gold-ribbon.background"
+    connect id="fresh-gold" from="gold-orbit.image" to="gold-ribbon.foreground"
+
+    connect id="cyan-memory" from="cyan-ribbon.image" to="cyan-magenta.background"
+    connect id="magenta-memory" from="magenta-ribbon.image" to="cyan-magenta.foreground"
+    connect id="two-ribbons" from="cyan-magenta.image" to="all-ribbons.background"
+    connect id="gold-memory" from="gold-ribbon.image" to="all-ribbons.foreground"
+    connect id="portal-background" from="portal-space.image" to="program-image.background"
+    connect id="ribbon-light" from="all-ribbons.image" to="program-image.foreground"
+    sink id="program" input="program-image.image"
+}
